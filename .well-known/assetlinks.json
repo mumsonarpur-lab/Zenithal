@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "app.vercel.zenithal_search.twa",
+        "sha256_cert_fingerprints": ["12:5D:26:29:BA:F9:A3:4C:95:C5:DC:BC:01:AE:92:8D:BF:1D:1C:ED:96:24:4A:A6:97:0A:63:A3:63:21:B0:94"]
+      }
+    }]
