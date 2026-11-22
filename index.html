@@ -65,11 +65,19 @@ body { font-family:'Segoe UI',sans-serif; margin:0; background:var(--bg); color:
       <div style="display:flex;gap:10px;">
         <button type="submit" class="btn">Search Zenithal</button>
         <button type="button" class="btn" id="micBtn" onclick="startVoice()">🎤 Voice</button>
-      </div>
-    </form>
-  </div>
-  <div class="main" id="results"></div>
+        <div class="main" id="results"></div>
 
+  <footer style="text-align:center;padding:24px 16px;color:var(--sub);font-size:14px;border-top:1px solid rgba(148,163,184,0.15);margin-top:40px;">
+    <div style="margin-bottom:8px;">
+      <a href="/about.html" style="color:var(--sub);margin:0 10px;text-decoration:none;">About</a> •
+      <a href="/privacy.html" style="color:var(--sub);margin:0 10px;text-decoration:none;">Privacy Policy</a> •
+      <a href="/terms.html" style="color:var(--sub);margin:0 10px;text-decoration:none;">Terms</a> •
+      <a href="/contact.html" style="color:var(--sub);margin:0 10px;text-decoration:none;">Contact</a>
+    </div>
+    <div>© 2026 Zenithal Search Engine • Built by Abhinit Pandey</div>
+  </footer>
+
+  <script src="/data.js"></script>
   <script>
     document.documentElement.setAttribute('data-theme', localStorage.getItem('zenithal_theme') || 'dark');
     function toggleTheme() {
@@ -93,38 +101,56 @@ body { font-family:'Segoe UI',sans-serif; margin:0; background:var(--bg); color:
       e.preventDefault();
       const raw = document.getElementById('q').value.trim();
       if (!raw) return;
+      const lower = raw.toLowerCase();
 
-           // Instant !bangs shortcuts
-      if (raw.startsWith('!yt ')) return location.href = 'https://' + '://youtube.com' + encodeURIComponent(raw.slice(4));
-      if (raw.startsWith('!g ')) return location.href = 'https://' + '://google.com' + encodeURIComponent(raw.slice(3));
-      if (raw.startsWith('!wiki ')) return location.href = 'https://' + 'en.wikipedia.org/wiki/Special:Search?search=' + encodeURIComponent(raw.slice(6));
+      // Instant !bangs shortcuts
+      if (lower.startsWith('!yt ')) return location.href = 'https://' + '://youtube.com' + encodeURIComponent(raw.slice(4));
+      if (lower.startsWith('!g ')) return location.href = 'https://' + '://google.com' + encodeURIComponent(raw.slice(3));
+      if (lower.startsWith('!wiki ')) return location.href = 'https://' + 'en.wikipedia.org/wiki/Special:Search?search=' + encodeURIComponent(raw.slice(6));
 
       const box = document.getElementById('results');
       document.getElementById('homeBox').style.height = 'auto';
       box.innerHTML = '<div class="card">Searching Zenithal...</div>';
 
-      // Built-in math calculator
+      // 1. Built-in Math Calculator
       if (/^[0-9+\-*/().\s]+$/.test(raw)) {
         try {
           const ans = Function('"use strict";return (' + raw + ')')();
-          box.innerHTML = `<div class="card"><div class="title">Calculator Result</div><p style="font-size:22px;font-weight:bold;">${raw} = ${ans}</p></div>`;
+          box.innerHTML = `<div class="card"><div class="title">🧮 Zenithal Calculator</div><p style="font-size:22px;font-weight:bold;margin:8px 0 0;">${raw} = ${ans}</p></div>`;
           return;
         } catch {}
       }
 
-      // Live Wikipedia Search API
+      // 2. Original Zenithal Knowledge Base (from data.js)
+      let htmlOut = '';
+      if (typeof ZENITHAL_DB !== 'undefined') {
+        const matches = ZENITHAL_DB.filter(item =>
+          item.title.toLowerCase().includes(lower) ||
+          item.keywords.some(k => lower.includes(k) || k.includes(lower))
+        );
+        if (matches.length) {
+          htmlOut += matches.map(m => `
+            <div class="card" style="border-left:4px solid #3b82f6;">
+              <div style="font-size:12px;color:#60a5fa;font-weight:bold;text-transform:uppercase;">⭐ Zenithal Original • ${m.category}</div>
+              <div class="title" style="margin-top:4px;">${m.title}</div>
+              <p style="margin:8px 0 6px;">${m.summary}</p>
+              <p style="color:var(--sub);font-size:14px;margin:0;">${m.example}</p>
+            </div>
+          `).join('');
+        }
+      }
+
+      // 3. Live Web Encyclopedia Fallback
       const apiUrl = 'https://' + 'en.wikipedia.org/w/api.php?action=query&list=search&format=json&origin=*&srsearch=' + encodeURIComponent(raw);
       const res = await fetch(apiUrl);
       const data = await res.json();
       const items = data.query?.search || [];
-      if (!items.length) {
-        const gUrl = 'https://www.google.com/search?q=' + encodeURIComponent(raw);
-
-
+      if (!items.length && !htmlOut) {
+        const gUrl = 'https://' + '://google.com' + encodeURIComponent(raw);
         box.innerHTML = `<div class="card">No instant results found. <a class="title" href="${gUrl}" target="_blank">Search on Google instead →</a></div>`;
-    return;
+        return;
       }
-      box.innerHTML = items.map(item => {
+      htmlOut += items.map(item => {
         const wUrl = 'https://' + 'en.wikipedia.org/wiki/' + encodeURIComponent(item.title);
         return `
         <div class="card item">
@@ -133,9 +159,14 @@ body { font-family:'Segoe UI',sans-serif; margin:0; background:var(--bg); color:
         </div>
       `;
       }).join('');
-
+      box.innerHTML = htmlOut;
     });
+
+    // Support ?q= URL parameter for browser default search
+    const urlQuery = new URLSearchParams(window.location.search).get('q');
+    if (urlQuery) {
+      document.getElementById('q').value = urlQuery;
+      document.getElementById('searchForm').dispatchEvent(new Event('submit'));
+    }
   </script>
-
-
 </body></html>
