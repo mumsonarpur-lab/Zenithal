@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Zenithal Meet</title>
+  <link rel="icon" href="image.png" />
+  <script src="https://unpkg.com"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, Arial, sans-serif; }
+    body { background: #202124; color: #e8eaed; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+
+    /* Top Header */
+    header { display: flex; justify-content: space-between; align-items: center; padding: 14px 24px; background: #202124; }
+    .brand { display: flex; align-items: center; gap: 10px; font-size: 1.3rem; font-weight: 500; color: #fff; text-decoration: none; }
+    .brand img { width: 32px; height: 32px; border-radius: 8px; }
+    .nav-link { color: #8ab4f8; text-decoration: none; font-size: 0.95rem; }
+
+    /* Home Lobby Screen */
+    #lobby { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px; text-align: center; }
+    #lobby h1 { font-size: 2.4rem; font-weight: 400; margin-bottom: 12px; max-width: 600px; }
+    #lobby p { color: #9aa0a6; font-size: 1.05rem; margin-bottom: 32px; max-width: 500px; }
+    .lobby-actions { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; align-items: center; }
+    .btn-new { background: #1a73e8; color: #fff; border: none; padding: 13px 22px; border-radius: 6px; font-size: 1rem; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 8px; }
+    .btn-new:hover { background: #1765cc; }
+    .join-box { display: flex; gap: 8px; }
+    .join-box input { background: transparent; border: 1px solid #5f6368; color: #fff; padding: 12px 16px; border-radius: 6px; font-size: 1rem; width: 220px; outline: none; }
+    .join-box input:focus { border-color: #8ab4f8; }
+    .btn-join { background: transparent; color: #8ab4f8; border: none; padding: 12px 16px; font-size: 1rem; font-weight: 500; cursor: pointer; border-radius: 6px; }
+    .btn-join:hover { background: rgba(138, 180, 248, 0.1); }
+
+    /* Active Call Screen */
+    #call-screen { display: none; flex: 1; flex-direction: column; height: 100%; }
+    .main-area { flex: 1; display: flex; padding: 16px; gap: 16px; overflow: hidden; }
+    .video-grid { flex: 1; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; align-items: center; justify-content: center; }
+    .video-card { position: relative; background: #3c4043; border-radius: 12px; overflow: hidden; width: 100%; height: 100%; max-height: 72vh; display: flex; align-items: center; justify-content: center; }
+    video { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
+    video.screen-share { transform: none; object-fit: contain; }
+    .name-tag { position: absolute; bottom: 12px; left: 14px; background: rgba(0,0,0,0.6); padding: 4px 10px; border-radius: 6px; font-size: 0.85rem; }
+
+    /* Side Chat Panel */
+    #chat-panel { display: none; width: 320px; background: #fff; color: #202124; border-radius: 12px; flex-direction: column; overflow: hidden; }
+    .chat-header { padding: 16px; font-weight: 600; border-bottom: 1px solid #dadce0; display: flex; justify-content: space-between; }
+    .chat-messages { flex: 1; padding: 14px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; font-size: 0.9rem; }
+    .msg { background: #f1f3f4; padding: 8px 12px; border-radius: 8px; }
+    .chat-input { display: flex; padding: 10px; border-top: 1px solid #dadce0; }
+    .chat-input input { flex: 1; border: none; outline: none; padding: 8px; font-size: 0.95rem; }
+    .chat-input button { background: #1a73e8; color: #fff; border: none; padding: 8px 14px; border-radius: 6px; cursor: pointer; }
+
+    /* Google Meet Bottom Control Bar */
+    .bottom-bar { height: 76px; display: flex; justify-content: space-between; align-items: center; padding: 0 24px; background: #202124; }
+    .room-info { font-size: 0.95rem; color: #e8eaed; display: flex; align-items: center; gap: 10px; }
+    .copy-btn { background: #3c4043; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; }
+    .controls { display: flex; gap: 14px; }
+    .ctrl-btn { width: 46px; height: 46px; border-radius: 50%; border: none; background: #3c4043; color: #fff; font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+    .ctrl-btn:hover { background: #4a4e52; }
+    .ctrl-btn.off { background: #ea4335; }
+    .ctrl-btn.end-call { background: #ea4335; width: 60px; border-radius: 24px; }
+  </style>
+</head>
+<body>
+
+  <header id="top-header">
+    <a href="index.html" class="brand">
+      <img src="image.png" alt="Zenithal" />
+      <span>Zenithal <strong>Meet</strong></span>
+    </a>
+    <a href="index.html" class="nav-link">Zenithal Search</a>
+  </header>
+
+  <!-- Lobby -->
+  <div id="lobby">
+    <h1>Video calls and meetings for everyone</h1>
+    <p>Connect, collaborate, and celebrate from anywhere with Zenithal Meet.</p>
+    <div class="lobby-actions">
+      <button class="btn-new" onclick="createMeeting()">📹 New meeting</button>
+      <div class="join-box">
+        <input type="text" id="code-input" placeholder="Enter a code or link" />
+        <button class="btn-join" onclick="joinFromInput()">Join</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Active Meeting Room -->
+  <div id="call-screen">
+    <div class="main-area">
+      <div class="video-grid" id="video-grid">
+        <div class="video-card">
+          <video id="local-video" autoplay muted playsinline></video>
+          <div class="name-tag">You</div>
+        </div>
+      </div>
+
+      <div id="chat-panel">
+        <div class="chat-header">
+          <span>In-call messages</span>
+          <span style="cursor:pointer;" onclick="toggleChat()">✕</span>
+        </div>
+        <div class="chat-messages" id="chat-messages"></div>
+        <div class="chat-input">
+          <input type="text" id="chat-text" placeholder="Send a message..." onkeypress="if(event.key==='Enter') sendMessage()" />
+          <button onclick="sendMessage()">Send</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="bottom-bar">
+      <div class="room-info">
+        <span id="display-code"></span>
+        <button class="copy-btn" onclick="copyInvite()">Copy link</button>
+      </div>
+      <div class="controls">
+        <button class="ctrl-btn" id="mic-btn" onclick="toggleMic()" title="Toggle Mic">🎤</button>
+        <button class="ctrl-btn" id="cam-btn" onclick="toggleCam()" title="Toggle Camera">📷</button>
+        <button class="ctrl-btn" onclick="shareScreen()" title="Share Screen">🖥️</button>
+        <button class="ctrl-btn" onclick="toggleChat()" title="Chat">💬</button>
+        <button class="ctrl-btn end-call" onclick="leaveMeeting()" title="Leave Call">📞</button>
+      </div>
+      <div style="width: 120px;"></div>
+    </div>
+  </div>
+
+  <script>
+    let peer, localStream, dataConn;
+    let isHost = false;
+    let roomCode = '';
+
+    async function getMedia() {
+      try {
+        localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+        document.getElementById('local-video').srcObject = localStream;
+      } catch (err) {
+        alert('Please allow Camera and Microphone permissions to use Zenithal Meet.');
+      }
+    }
+
+    function generateRoomId() {
+      const part = () => Math.random().toString(36).substring(2, 5);
+      return `zen-${part()}-${part()}`;
+    }
+
+    async function createMeeting() {
+      isHost = true;
+      roomCode = generateRoomId();
+      await startCallUI(roomCode);
+
+      peer = new Peer(roomCode);
+      peer.on('call', (call) => {
+        call.answer(localStream);
+        call.on('stream', (remoteStream) => addRemoteVideo(remoteStream, call.peer));
+      });
+      peer.on('connection', (conn) => {
+        dataConn = conn;
+        setupChatListener(conn);
+      });
+    }
+
+    async function joinMeeting(code) {
+      isHost = false;
+      roomCode = code;
+      await startCallUI(roomCode);
+
+      peer = new Peer();
+      peer.on('open', () => {
+        const call = peer.call(roomCode, localStream);
+        call.on('stream', (remoteStream) => addRemoteVideo(remoteStream, roomCode));
+        dataConn = peer.connect(roomCode);
+        setupChatListener(dataConn);
+      });
+    }
+
+    async function startCallUI(code) {
+      await getMedia();
+      document.getElementById('lobby').style.display = 'none';
+      document.getElementById('top-header').style.display = 'none';
+      document.getElementById('call-screen').style.display = 'flex';
+      document.getElementById('display-code').textContent = code;
+
+      const newUrl = `${window.location.origin}${window.location.pathname}?room=${code}`;
+      window.history.replaceState({}, '', newUrl);
+    }
+
+    function addRemoteVideo(stream, id) {
+      if (document.getElementById('remote-' + id)) return;
+      const card = document.createElement('div');
+      card.className = 'video-card';
+      card.id = 'remote-' + id;
+
+      const vid = document.createElement('video');
+      vid.srcObject = stream;
+      vid.autoplay = true;
+      vid.playsinline = true;
+
+      const tag = document.createElement('div');
+      tag.className = 'name-tag';
+      tag.textContent = 'Participant';
+
+      card.appendChild(vid);
+      card.appendChild(tag);
+      document.getElementById('video-grid').appendChild(card);
+    }
+
+    function joinFromInput() {
+      let val = document.getElementById('code-input').value.trim();
+      if (!val) return alert('Enter a meeting code or link!');
+      if (val.includes('?room=')) val = val.split('?room=')[1];
+      joinMeeting(val);
+    }
+
+    function toggleMic() {
+      const track = localStream.getAudioTracks()[0];
+      track.enabled = !track.enabled;
