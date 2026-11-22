@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://zenithal-search.vercel.app/sitemap.xml
