@@ -40,28 +40,89 @@ body { font-family:'Segoe UI',sans-serif; margin:0; background:var(--bg); color:
 </head>
 <body>
 
-<div class="bar">
-    <span class="badge">Zenithal™ Enterprise v6.0</span>
-    <a href="http://127.0.0.1:5000/enterprise" class="btn-sm">Enterprise Console</a>
+  <div class="bar">
+    <span class="badge">Zenithal Enterprise v6.0</span>
     <button class="btn-sm" onclick="toggleTheme()">Theme</button>
-</div>
-<div class="home">
-    <div class="logo">Zenithal™</div>
+  </div>
+  <div class="home" id="homeBox">
+    <div class="logo">Zenithal</div>
     <p style="color:var(--sub);margin:8px 0 26px;">Enterprise Global Discovery &amp; Intelligence</p>
-    <form action="http://127.0.0.1:5000/search" method="get" style="width:100%;display:flex;flex-direction:column;align-items:center;">
-        <input type="text" name="q" class="box" placeholder="Try searching: python, wikipedia, news, or 25 * 16..." autofocus="" required="">
+    <form id="searchForm" style="width:100%;display:flex;flex-direction:column;align-items:center;">
+      <input type="text" id="q" class="box" placeholder="Try searching: python, wikipedia, !yt music, or 25 * 16..." autofocus required>
+      <div style="display:flex;gap:10px;">
         <button type="submit" class="btn">Search Zenithal</button>
+        <button type="button" class="btn" id="micBtn" onclick="startVoice()">🎤 Voice</button>
+      </div>
     </form>
-</div>
+  </div>
+  <div class="main" id="results"></div>
 
-<script>
-document.documentElement.setAttribute('data-theme', localStorage.getItem('Zenithal_theme') || 'light');
-function toggleTheme() {
-    const n = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-    document.documentElement.setAttribute('data-theme', n);
-    localStorage.setItem('Zenithal_theme', n);
-}
-</script>
+  <script>
+    document.documentElement.setAttribute('data-theme', localStorage.getItem('zenithal_theme') || 'dark');
+    function toggleTheme() {
+      const n = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', n);
+      localStorage.setItem('zenithal_theme', n);
+    }
+
+    function startVoice() {
+      const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRec) return alert('Voice search is supported in Chrome and Edge.');
+      const rec = new SpeechRec();
+      rec.onresult = e => {
+        document.getElementById('q').value = e.results[0][0].transcript;
+        document.getElementById('searchForm').dispatchEvent(new Event('submit'));
+      };
+      rec.start();
+    }
+
+    document.getElementById('searchForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const raw = document.getElementById('q').value.trim();
+      if (!raw) return;
+
+           // Instant !bangs shortcuts
+      if (raw.startsWith('!yt ')) return location.href = 'https://' + '://youtube.com' + encodeURIComponent(raw.slice(4));
+      if (raw.startsWith('!g ')) return location.href = 'https://' + '://google.com' + encodeURIComponent(raw.slice(3));
+      if (raw.startsWith('!wiki ')) return location.href = 'https://' + 'en.wikipedia.org/wiki/Special:Search?search=' + encodeURIComponent(raw.slice(6));
+
+      const box = document.getElementById('results');
+      document.getElementById('homeBox').style.height = 'auto';
+      box.innerHTML = '<div class="card">Searching Zenithal...</div>';
+
+      // Built-in math calculator
+      if (/^[0-9+\-*/().\s]+$/.test(raw)) {
+        try {
+          const ans = Function('"use strict";return (' + raw + ')')();
+          box.innerHTML = `<div class="card"><div class="title">Calculator Result</div><p style="font-size:22px;font-weight:bold;">${raw} = ${ans}</p></div>`;
+          return;
+        } catch {}
+      }
+
+      // Live Wikipedia Search API
+      const apiUrl = 'https://' + 'en.wikipedia.org/w/api.php?action=query&list=search&format=json&origin=*&srsearch=' + encodeURIComponent(raw);
+      const res = await fetch(apiUrl);
+      const data = await res.json();
+      const items = data.query?.search || [];
+      if (!items.length) {
+        const gUrl = 'https://www.google.com/search?q=' + encodeURIComponent(raw);
+
+
+        box.innerHTML = `<div class="card">No instant results found. <a class="title" href="${gUrl}" target="_blank">Search on Google instead →</a></div>`;
+    return;
+      }
+      box.innerHTML = items.map(item => {
+        const wUrl = 'https://' + 'en.wikipedia.org/wiki/' + encodeURIComponent(item.title);
+        return `
+        <div class="card item">
+          <a class="title" href="${wUrl}" target="_blank">${item.title}</a>
+          <p style="color:var(--sub);margin:6px 0 0;">${item.snippet}...</p>
+        </div>
+      `;
+      }).join('');
+
+    });
+  </script>
 
 
 </body></html>
