@@ -95,7 +95,7 @@
       if (!SpeechRec) return alert('Voice search is supported in Chrome and Edge.');
       const rec = new SpeechRec();
       rec.onresult = e => {
-        document.getElementById('q').value = e.results[0][0].transcript;
+        document.getElementById('q').value = e.results.item(0).item(0).transcript;
         document.getElementById('searchForm').dispatchEvent(new Event('submit'));
       };
       rec.start();
@@ -128,7 +128,7 @@
       // 1B. Instant Unit & Temperature Converter
       const convMatch = lower.match(/^([0-9.]+)\s*(km|miles|m|cm|kg|lbs|c|f)\s+(?:to|in)\s+(km|miles|m|cm|kg|lbs|c|f)$/);
       if (convMatch) {
-        const val = parseFloat(convMatch[1]), from = convMatch[2], to = convMatch[3];
+        const val = parseFloat(convMatch.at(1)), from = convMatch.at(2), to = convMatch.at(3);
         const rates = { 'km_miles': 0.621371, 'miles_km': 1.60934, 'm_cm': 100, 'cm_m': 0.01, 'kg_lbs': 2.20462, 'lbs_kg': 0.453592 };
         let out = null;
         if (from === 'c' && to === 'f') out = (val * 9/5) + 32;
@@ -147,9 +147,11 @@
           const dRes = await fetch('https://' + 'api.dictionaryapi.dev/api/v2/entries/en/' + encodeURIComponent(word));
           if (dRes.ok) {
             const dData = await dRes.json();
-            const m = dData[0]?.meanings?.[0];
-            const def = m?.definitions?.[0]?.definition || 'No definition found.';
-            box.innerHTML = `<div class="card"><div class="title">📖 Dictionary: ${dData[0].word} <span style="font-size:14px;color:var(--sub);">(${m?.partOfSpeech || ''})</span></div><p style="margin:8px 0 0;">${def}</p></div>`;
+            const entry = dData.at(0);
+            const m = entry && entry.meanings && entry.meanings.at(0);
+            const defObj = m && m.definitions && m.definitions.at(0);
+            const def = (defObj && defObj.definition) || 'No definition found.';
+            box.innerHTML = `<div class="card"><div class="title">📖 Dictionary: ${entry.word} <span style="font-size:14px;color:var(--sub);">(${(m && m.partOfSpeech) || ''})</span></div><p style="margin:8px 0 0;">${def}</p></div>`;
             return;
           }
         } catch {}
@@ -161,8 +163,5 @@
         try {
           const gRes = await fetch('https://' + '://open-meteo.com' + encodeURIComponent(city));
           const gData = await gRes.json();
-          const p = gData.results?.[0];
+          const p = gData.results && gData.results.at(0);
           if (p) {
-            const wRes = await fetch('https://' + `://open-meteo.com{p.latitude}&longitude=${p.longitude}&current_weather=true`);
-            const wData = await wRes.json();
-            const cur = wData.current_weather;
