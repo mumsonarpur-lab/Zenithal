@@ -57,7 +57,8 @@ body { font-family:'Segoe UI',sans-serif; margin:0; background:var(--bg); color:
     <span class="badge">Zenithal Enterprise v6.0</span>
     <button class="btn-sm" onclick="toggleTheme()">Theme</button>
   </div>
-  <div class="home" id="homeBox">
+  <div class="home" id="homeBox" style="flex-direction:column;">
+
     <div class="logo">Zenithal</div>
     <p style="color:var(--sub);margin:8px 0 26px;">Enterprise Global Discovery &amp; Intelligence</p>
     <form id="searchForm" style="width:100%;display:flex;flex-direction:column;align-items:center;">
@@ -109,7 +110,9 @@ body { font-family:'Segoe UI',sans-serif; margin:0; background:var(--bg); color:
       if (lower.startsWith('!wiki ')) return location.href = 'https://' + 'en.wikipedia.org/wiki/Special:Search?search=' + encodeURIComponent(raw.slice(6));
 
       const box = document.getElementById('results');
-      document.getElementById('homeBox').style.height = 'auto';
+      document.getElementById('homeBox').style.height = 'auto';document.getElementById('homeBox').style.padding = '30px 0';
+
+
       box.innerHTML = '<div class="card">Searching Zenithal...</div>';
 
       // 1. Built-in Math Calculator
