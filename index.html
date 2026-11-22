@@ -65,7 +65,17 @@ body { font-family:'Segoe UI',sans-serif; margin:0; background:var(--bg); color:
       <input type="text" id="q" class="box" placeholder="Try searching: python, wikipedia, !yt music, or 25 * 16..." autofocus required>
       <div style="display:flex;gap:10px;">
         <button type="submit" class="btn">Search Zenithal</button>
-        <button type="button" class="btn" id="micBtn" onclick="startVoice()">🎤 Voice</button>
+        <button type="button" class="btn" id="micBtn" onclick="startVoice()">🎤 Voice</button>        </div>
+      </form>
+      <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:16px;max-width:600px;">
+        <button type="button" onclick="quickSearch('25 * 16')" style="padding:6px 12px;border-radius:99px;border:1px solid #334155;background:rgba(30,41,59,0.7);color:var(--text);cursor:pointer;font-size:13px;">🧮 Math: 25 * 16</button>
+        <button type="button" onclick="quickSearch('define zenith')" style="padding:6px 12px;border-radius:99px;border:1px solid #334155;background:rgba(30,41,59,0.7);color:var(--text);cursor:pointer;font-size:13px;">📖 define zenith</button>
+        <button type="button" onclick="quickSearch('weather Kolkata')" style="padding:6px 12px;border-radius:99px;border:1px solid #334155;background:rgba(30,41,59,0.7);color:var(--text);cursor:pointer;font-size:13px;">🌤️ weather Kolkata</button>
+        <button type="button" onclick="quickSearch('10 km to miles')" style="padding:6px 12px;border-radius:99px;border:1px solid #334155;background:rgba(30,41,59,0.7);color:var(--text);cursor:pointer;font-size:13px;">⚖️ 10 km to miles</button>
+        <button type="button" onclick="quickSearch('newton')" style="padding:6px 12px;border-radius:99px;border:1px solid #334155;background:rgba(30,41,59,0.7);color:var(--text);cursor:pointer;font-size:13px;">🔬 Newton's Laws</button>
+      </div>
+    </div>
+
         <div class="main" id="results"></div>
 
   <footer style="text-align:center;padding:24px 16px;color:var(--sub);font-size:14px;border-top:1px solid rgba(148,163,184,0.15);margin-top:40px;">
@@ -114,6 +124,48 @@ body { font-family:'Segoe UI',sans-serif; margin:0; background:var(--bg); color:
 
 
       box.innerHTML = '<div class="card">Searching Zenithal...</div>';
+      // 1B. Instant Unit & Temperature Converter (e.g., "10 km to miles", "100 f to c")
+      const convMatch = lower.match(/^([0-9.]+)\s*(km|miles|m|cm|kg|lbs|c|f)\s+(?:to|in)\s+(km|miles|m|cm|kg|lbs|c|f)$/);
+      if (convMatch) {
+        const val = parseFloat(convMatch[1]), from = convMatch[2], to = convMatch[3];
+        const rates = { 'km_miles': 0.621371, 'miles_km': 1.60934, 'm_cm': 100, 'cm_m': 0.01, 'kg_lbs': 2.20462, 'lbs_kg': 0.453592 };
+        let out = null;
+        if (from === 'c' && to === 'f') out = (val * 9/5) + 32;
+        else if (from === 'f' && to === 'c') out = (val - 32) * 5/9;
+        else if (rates[from + '_' + to]) out = val * rates[from + '_' + to];
+        if (out !== null) {
+          box.innerHTML = `<div class="card"><div class="title">⚖️ Zenithal Unit Converter</div><p style="font-size:22px;font-weight:bold;margin:8px 0 0;">${val} ${from.toUpperCase()} = ${out.toFixed(2)} ${to.toUpperCase()}</p></div>`;
+          return;
+        }
+      }
+
+      // 1C. Instant Dictionary Card (e.g., "define zenith")
+      if (/^(define|meaning of)\s+/i.test(raw)) {
+        const word = raw.replace(/^(define|meaning of)\s+/i, '').trim();
+        const dRes = await fetch('https://' + 'api.dictionaryapi.dev/api/v2/entries/en/' + encodeURIComponent(word));
+        if (dRes.ok) {
+          const dData = await dRes.json();
+          const m = dData[0]?.meanings?.[0];
+          const def = m?.definitions?.[0]?.definition || 'No definition found.';
+          box.innerHTML = `<div class="card"><div class="title">📖 Dictionary: ${dData[0].word} <span style="font-size:14px;color:var(--sub);">(${m?.partOfSpeech || ''})</span></div><p style="margin:8px 0 0;">${def}</p></div>`;
+          return;
+        }
+      }
+
+      // 1D. Instant Live Weather Card (e.g., "weather Kolkata")
+      if (/^weather\s+/i.test(raw)) {
+        const city = raw.replace(/^weather\s+/i, '').trim();
+        const gRes = await fetch('https://' + '://open-meteo.com' + encodeURIComponent(city));
+        const gData = await gRes.json();
+        const p = gData.results?.[0];
+        if (p) {
+          const wRes = await fetch('https://' + `://open-meteo.com{p.latitude}&longitude=${p.longitude}&current_weather=true`);
+          const wData = await wRes.json();
+          const cur = wData.current_weather;
+          box.innerHTML = `<div class="card"><div class="title">🌤️ Live Weather: ${p.name}, ${p.country}</div><p style="font-size:22px;font-weight:bold;margin:8px 0 4px;">${cur.temperature}°C</p><p style="color:var(--sub);margin:0;">Wind Speed: ${cur.windspeed} km/h</p></div>`;
+          return;
+        }
+      }
 
       // 1. Built-in Math Calculator
       if (/^[0-9+\-*/().\s]+$/.test(raw)) {
@@ -169,6 +221,10 @@ body { font-family:'Segoe UI',sans-serif; margin:0; background:var(--bg); color:
     const urlQuery = new URLSearchParams(window.location.search).get('q');
     if (urlQuery) {
       document.getElementById('q').value = urlQuery;
+      document.getElementById('searchForm').dispatchEvent(new Event('submit'));
+    }
+          function quickSearch(text) {
+      document.getElementById('q').value = text;
       document.getElementById('searchForm').dispatchEvent(new Event('submit'));
     }
   </script>
