@@ -107,6 +107,7 @@
       if (!raw) return;
       const lower = raw.toLowerCase();
 
+
       // Instant !bangs shortcuts
       if (lower.startsWith('!yt ')) return location.href = 'https://' + '://youtube.com' + encodeURIComponent(raw.slice(4));
       if (lower.startsWith('!g ')) return location.href = 'https://' + '://google.com' + encodeURIComponent(raw.slice(3));
