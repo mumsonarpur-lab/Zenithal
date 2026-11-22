@@ -1,89 +1,82 @@
 <!DOCTYPE html>
-<!-- saved from url=(0022)http://127.0.0.1:5000/ -->
-<html lang="en" data-theme="dark"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<meta name="google-site-verification" content="celRh5m3sgG_1hAXN0hw7IsFpL272ucsU1dihV9vtxw" />
-<title>Zenithal — Official Web Search Engine</title>
-    <meta name="description" content="Zenithal Search is a fast, clean, and modern web search engine built by Abhinit Pandey." />
-<link rel="canonical" href="https://zenithal-search.vercel.app" />
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zenithal — Official Web Search Engine</title>
+  <meta name="description" content="Zenithal is a fast, clean, and modern web search engine built by Abhinit Pandey with instant math, dictionary, weather, unit converter, and voice search." />
+  <link rel="canonical" href="https://vercel.app" />
   <meta property="og:site_name" content="Zenithal" />
   <meta property="og:title" content="Zenithal — Official Web Search Engine" />
   <meta property="og:description" content="Zenithal is a fast, clean, and modern web search engine built by Abhinit Pandey." />
-  <meta property="og:url" content="https://zenithal-search.vercel.app" />
+  <meta property="og:url" content="https://vercel.app" />
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "WebSite",
     "name": "Zenithal",
     "alternateName": ["Zenithal Search", "Zenithal Search Engine"],
-    "url": "https://zenithal-search.vercel.app"
+    "url": "https://vercel.app"
   }
   </script>
-
-    <link rel="manifest" href="/manifest.json">
-<script>
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/sw.js');
-  }
-</script>
-
-<style>
-:root { --bg:#fff; --text:#1e293b; --sub:#64748b; --card:#f8fafc; --border:#e2e8f0; --accent:#4f46e5; --link:#2563eb; }
-[data-theme="dark"] { --bg:#0f172a; --text:#f1f5f9; --sub:#94a3b8; --card:#1e293b; --border:#334155; --accent:#6366f1; --link:#60a5fa; }
-body { font-family:'Segoe UI',sans-serif; margin:0; background:var(--bg); color:var(--text); }
-.bar { display:flex; justify-content:flex-end; align-items:center; padding:14px 28px; gap:12px; font-size:13px; }
-.badge { background:rgba(16,185,129,.15); color:#10b981; padding:4px 10px; border-radius:12px; font-weight:600; }
-.btn-sm { background:var(--card); border:1px solid var(--border); color:var(--text); padding:6px 12px; border-radius:8px; cursor:pointer; text-decoration:none; }
-.home { display:flex; flex-direction:column; align-items:center; justify-content:center; height:74vh; padding:0 20px; }
-.logo { font-size:62px; font-weight:800; background:linear-gradient(135deg,#4f46e5,#06b6d4); -webkit-background-clip:text; -webkit-text-fill-color:transparent; text-decoration:none; }
-.box { width:100%; max-width:580px; padding:14px 20px; font-size:16px; background:var(--card); color:var(--text); border:2px solid var(--border); border-radius:12px; outline:none; }
-.btn { margin-top:18px; padding:12px 26px; font-size:15px; font-weight:600; background:var(--accent); color:#fff; border:none; border-radius:10px; cursor:pointer; }
-.hdr { display:flex; align-items:center; justify-content:space-between; padding:14px 28px; border-bottom:1px solid var(--border); gap:16px; }
-.hdr .logo { font-size:28px; }
-.tabs { display:flex; gap:20px; padding-left:40px; border-bottom:1px solid var(--border); font-size:14px; }
-.tab { padding:10px 4px; text-decoration:none; color:var(--sub); border-bottom:3px solid transparent; }
-.tab.active { color:var(--accent); border-bottom-color:var(--accent); font-weight:700; }
-.main { max-width:720px; margin:24px 40px; }
-.card { background:var(--card); border-left:4px solid var(--accent); padding:14px; border-radius:8px; margin-bottom:20px; }
-.item { margin-bottom:22px; }
-.title { font-size:18px; font-weight:600; color:var(--link); text-decoration:none; }
-.grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:14px; padding:24px 40px; }
-.img-card { background:var(--card); border:1px solid var(--border); border-radius:8px; overflow:hidden; text-decoration:none; color:var(--text); }
-.img-card img { width:100%; height:140px; object-fit:cover; display:block; }
-</style>
+  <link rel="manifest" href="/manifest.json">
+  <style>
+    :root[data-theme="dark"] { --bg: #0f172a; --card: #1e293b; --text: #f1f5f9; --sub: #94a3b8; --accent: #3b82f6; --border: #334155; }
+    :root[data-theme="light"] { --bg: #f8fafc; --card: #ffffff; --text: #0f172a; --sub: #475569; --accent: #2563eb; --border: #cbd5e1; }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
+    .topbar { display: flex; justify-content: flex-end; align-items: center; gap: 10px; padding: 14px 20px; }
+    .badge { background: rgba(16, 185, 129, 0.15); color: #34d399; padding: 5px 12px; border-radius: 99px; font-size: 12px; font-weight: 600; }
+    .btn-sm { background: var(--card); color: var(--text); border: 1px solid var(--border); padding: 6px 14px; border-radius: 8px; cursor: pointer; font-size: 13px; }
+    .home { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; text-align: center; }
+    .logo { font-size: 56px; font-weight: 800; color: var(--accent); letter-spacing: -1px; cursor: pointer; }
+    .box { width: 100%; max-width: 580px; padding: 14px 20px; border-radius: 99px; border: 1px solid var(--border); background: var(--card); color: var(--text); font-size: 16px; outline: none; }
+    .box:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25); }
+    .btn { background: var(--accent); color: #fff; border: none; padding: 11px 22px; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer; }
+    .btn:hover { opacity: 0.92; }
+    .chip { padding: 6px 12px; border-radius: 99px; border: 1px solid var(--border); background: var(--card); color: var(--text); cursor: pointer; font-size: 13px; }
+    .chip:hover { border-color: var(--accent); }
+    .main { width: 100%; max-width: 720px; margin: 0 auto; padding: 0 20px 30px; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 18px 20px; margin-bottom: 14px; text-align: left; }
+    .title { font-size: 18px; font-weight: 700; color: #60a5fa; text-decoration: none; }
+    footer { text-align: center; padding: 20px 16px; color: var(--sub); font-size: 14px; border-top: 1px solid rgba(148, 163, 184, 0.15); margin-top: auto; }
+    footer a { color: var(--sub); margin: 0 10px; text-decoration: none; }
+    footer a:hover { color: var(--accent); }
+  </style>
 </head>
 <body>
-
-  <div class="bar">
+  <div class="topbar">
     <span class="badge">Zenithal Enterprise v6.0</span>
     <button class="btn-sm" onclick="toggleTheme()">Theme</button>
   </div>
-  <div class="home" id="homeBox" style="flex-direction:column;">
 
-    <div class="logo">Zenithal</div>
-    <p style="color:var(--sub);margin:8px 0 26px;">Enterprise Global Discovery &amp; Intelligence</p>
+  <div class="home" id="homeBox">
+    <div class="logo" onclick="location.href='/'">Zenithal</div>
+    <p style="color:var(--sub);margin:8px 0 24px;">Enterprise Global Discovery &amp; Intelligence</p>
     <form id="searchForm" style="width:100%;display:flex;flex-direction:column;align-items:center;">
-      <input type="text" id="q" class="box" placeholder="Try searching: python, wikipedia, !yt music, or 25 * 16..." autofocus required>
-      <div style="display:flex;gap:10px;">
+      <input type="text" id="q" class="box" placeholder="Try: 25 * 16, define zenith, weather Kolkata, 10 km to miles, or newton..." autofocus required>
+      <div style="display:flex;gap:10px;margin-top:16px;">
         <button type="submit" class="btn">Search Zenithal</button>
-        <button type="button" class="btn" id="micBtn" onclick="startVoice()">🎤 Voice</button>        </div>
-      </form>
-      <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:16px;max-width:600px;">
-        <button type="button" onclick="quickSearch('25 * 16')" style="padding:6px 12px;border-radius:99px;border:1px solid #334155;background:rgba(30,41,59,0.7);color:var(--text);cursor:pointer;font-size:13px;">🧮 Math: 25 * 16</button>
-        <button type="button" onclick="quickSearch('define zenith')" style="padding:6px 12px;border-radius:99px;border:1px solid #334155;background:rgba(30,41,59,0.7);color:var(--text);cursor:pointer;font-size:13px;">📖 define zenith</button>
-        <button type="button" onclick="quickSearch('weather Kolkata')" style="padding:6px 12px;border-radius:99px;border:1px solid #334155;background:rgba(30,41,59,0.7);color:var(--text);cursor:pointer;font-size:13px;">🌤️ weather Kolkata</button>
-        <button type="button" onclick="quickSearch('10 km to miles')" style="padding:6px 12px;border-radius:99px;border:1px solid #334155;background:rgba(30,41,59,0.7);color:var(--text);cursor:pointer;font-size:13px;">⚖️ 10 km to miles</button>
-        <button type="button" onclick="quickSearch('newton')" style="padding:6px 12px;border-radius:99px;border:1px solid #334155;background:rgba(30,41,59,0.7);color:var(--text);cursor:pointer;font-size:13px;">🔬 Newton's Laws</button>
+        <button type="button" class="btn" id="micBtn" onclick="startVoice()">🎤 Voice</button>
       </div>
+    </form>
+    <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:18px;max-width:600px;">
+      <button type="button" class="chip" onclick="quickSearch('25 * 16')">🧮 Math: 25 * 16</button>
+      <button type="button" class="chip" onclick="quickSearch('define zenith')">📖 define zenith</button>
+      <button type="button" class="chip" onclick="quickSearch('weather Kolkata')">🌤️ weather Kolkata</button>
+      <button type="button" class="chip" onclick="quickSearch('10 km to miles')">⚖️ 10 km to miles</button>
+      <button type="button" class="chip" onclick="quickSearch('newton')">🔬 Newton's Laws</button>
     </div>
+  </div>
 
-        <div class="main" id="results"></div>
+  <div class="main" id="results"></div>
 
-  <footer style="text-align:center;padding:24px 16px;color:var(--sub);font-size:14px;border-top:1px solid rgba(148,163,184,0.15);margin-top:40px;">
+  <footer>
     <div style="margin-bottom:8px;">
-      <a href="/about.html" style="color:var(--sub);margin:0 10px;text-decoration:none;">About</a> •
-      <a href="/privacy.html" style="color:var(--sub);margin:0 10px;text-decoration:none;">Privacy Policy</a> •
-      <a href="/terms.html" style="color:var(--sub);margin:0 10px;text-decoration:none;">Terms</a> •
-      <a href="/contact.html" style="color:var(--sub);margin:0 10px;text-decoration:none;">Contact</a>
+      <a href="/about.html">About</a> •
+      <a href="/privacy.html">Privacy Policy</a> •
+      <a href="/terms.html">Terms</a> •
+      <a href="/contact.html">Contact</a>
     </div>
     <div>© 2026 Zenithal Search Engine • Built by Abhinit Pandey</div>
   </footer>
@@ -120,11 +113,19 @@ body { font-family:'Segoe UI',sans-serif; margin:0; background:var(--bg); color:
       if (lower.startsWith('!wiki ')) return location.href = 'https://' + 'en.wikipedia.org/wiki/Special:Search?search=' + encodeURIComponent(raw.slice(6));
 
       const box = document.getElementById('results');
-      document.getElementById('homeBox').style.height = 'auto';document.getElementById('homeBox').style.padding = '30px 0';
-
-
+      document.getElementById('homeBox').style.padding = '24px 20px';
       box.innerHTML = '<div class="card">Searching Zenithal...</div>';
-      // 1B. Instant Unit & Temperature Converter (e.g., "10 km to miles", "100 f to c")
+
+      // 1A. Built-in Math Calculator
+      if (/^[0-9+\-*/().\s]+$/.test(raw)) {
+        try {
+          const ans = Function('"use strict";return (' + raw + ')')();
+          box.innerHTML = `<div class="card"><div class="title">🧮 Zenithal Calculator</div><p style="font-size:22px;font-weight:bold;margin:8px 0 0;">${raw} = ${ans}</p></div>`;
+          return;
+        } catch {}
+      }
+
+      // 1B. Instant Unit & Temperature Converter
       const convMatch = lower.match(/^([0-9.]+)\s*(km|miles|m|cm|kg|lbs|c|f)\s+(?:to|in)\s+(km|miles|m|cm|kg|lbs|c|f)$/);
       if (convMatch) {
         const val = parseFloat(convMatch[1]), from = convMatch[2], to = convMatch[3];
@@ -139,93 +140,29 @@ body { font-family:'Segoe UI',sans-serif; margin:0; background:var(--bg); color:
         }
       }
 
-      // 1C. Instant Dictionary Card (e.g., "define zenith")
+      // 1C. Instant Dictionary Card
       if (/^(define|meaning of)\s+/i.test(raw)) {
         const word = raw.replace(/^(define|meaning of)\s+/i, '').trim();
-        const dRes = await fetch('https://' + 'api.dictionaryapi.dev/api/v2/entries/en/' + encodeURIComponent(word));
-        if (dRes.ok) {
-          const dData = await dRes.json();
-          const m = dData[0]?.meanings?.[0];
-          const def = m?.definitions?.[0]?.definition || 'No definition found.';
-          box.innerHTML = `<div class="card"><div class="title">📖 Dictionary: ${dData[0].word} <span style="font-size:14px;color:var(--sub);">(${m?.partOfSpeech || ''})</span></div><p style="margin:8px 0 0;">${def}</p></div>`;
-          return;
-        }
-      }
-
-      // 1D. Instant Live Weather Card (e.g., "weather Kolkata")
-      if (/^weather\s+/i.test(raw)) {
-        const city = raw.replace(/^weather\s+/i, '').trim();
-        const gRes = await fetch('https://' + '://open-meteo.com' + encodeURIComponent(city));
-        const gData = await gRes.json();
-        const p = gData.results?.[0];
-        if (p) {
-          const wRes = await fetch('https://' + `://open-meteo.com{p.latitude}&longitude=${p.longitude}&current_weather=true`);
-          const wData = await wRes.json();
-          const cur = wData.current_weather;
-          box.innerHTML = `<div class="card"><div class="title">🌤️ Live Weather: ${p.name}, ${p.country}</div><p style="font-size:22px;font-weight:bold;margin:8px 0 4px;">${cur.temperature}°C</p><p style="color:var(--sub);margin:0;">Wind Speed: ${cur.windspeed} km/h</p></div>`;
-          return;
-        }
-      }
-
-      // 1. Built-in Math Calculator
-      if (/^[0-9+\-*/().\s]+$/.test(raw)) {
         try {
-          const ans = Function('"use strict";return (' + raw + ')')();
-          box.innerHTML = `<div class="card"><div class="title">🧮 Zenithal Calculator</div><p style="font-size:22px;font-weight:bold;margin:8px 0 0;">${raw} = ${ans}</p></div>`;
-          return;
+          const dRes = await fetch('https://' + 'api.dictionaryapi.dev/api/v2/entries/en/' + encodeURIComponent(word));
+          if (dRes.ok) {
+            const dData = await dRes.json();
+            const m = dData[0]?.meanings?.[0];
+            const def = m?.definitions?.[0]?.definition || 'No definition found.';
+            box.innerHTML = `<div class="card"><div class="title">📖 Dictionary: ${dData[0].word} <span style="font-size:14px;color:var(--sub);">(${m?.partOfSpeech || ''})</span></div><p style="margin:8px 0 0;">${def}</p></div>`;
+            return;
+          }
         } catch {}
       }
 
-      // 2. Original Zenithal Knowledge Base (from data.js)
-      let htmlOut = '';
-      if (typeof ZENITHAL_DB !== 'undefined') {
-        const matches = ZENITHAL_DB.filter(item =>
-          item.title.toLowerCase().includes(lower) ||
-          item.keywords.some(k => lower.includes(k) || k.includes(lower))
-        );
-        if (matches.length) {
-          htmlOut += matches.map(m => `
-            <div class="card" style="border-left:4px solid #3b82f6;">
-              <div style="font-size:12px;color:#60a5fa;font-weight:bold;text-transform:uppercase;">⭐ Zenithal Original • ${m.category}</div>
-              <div class="title" style="margin-top:4px;">${m.title}</div>
-              <p style="margin:8px 0 6px;">${m.summary}</p>
-              <p style="color:var(--sub);font-size:14px;margin:0;">${m.example}</p>
-            </div>
-          `).join('');
-        }
-      }
-
-      // 3. Live Web Encyclopedia Fallback
-      const apiUrl = 'https://' + 'en.wikipedia.org/w/api.php?action=query&list=search&format=json&origin=*&srsearch=' + encodeURIComponent(raw);
-      const res = await fetch(apiUrl);
-      const data = await res.json();
-      const items = data.query?.search || [];
-      if (!items.length && !htmlOut) {
-        const gUrl = 'https://' + '://google.com' + encodeURIComponent(raw);
-        box.innerHTML = `<div class="card">No instant results found. <a class="title" href="${gUrl}" target="_blank">Search on Google instead →</a></div>`;
-        return;
-      }
-      htmlOut += items.map(item => {
-        const wUrl = 'https://' + 'en.wikipedia.org/wiki/' + encodeURIComponent(item.title);
-        return `
-        <div class="card item">
-          <a class="title" href="${wUrl}" target="_blank">${item.title}</a>
-          <p style="color:var(--sub);margin:6px 0 0;">${item.snippet}...</p>
-        </div>
-      `;
-      }).join('');
-      box.innerHTML = htmlOut;
-    });
-
-    // Support ?q= URL parameter for browser default search
-    const urlQuery = new URLSearchParams(window.location.search).get('q');
-    if (urlQuery) {
-      document.getElementById('q').value = urlQuery;
-      document.getElementById('searchForm').dispatchEvent(new Event('submit'));
-    }
-          function quickSearch(text) {
-      document.getElementById('q').value = text;
-      document.getElementById('searchForm').dispatchEvent(new Event('submit'));
-    }
-  </script>
-</body></html>
+      // 1D. Instant Live Weather Card
+      if (/^weather\s+/i.test(raw)) {
+        const city = raw.replace(/^weather\s+/i, '').trim();
+        try {
+          const gRes = await fetch('https://' + '://open-meteo.com' + encodeURIComponent(city));
+          const gData = await gRes.json();
+          const p = gData.results?.[0];
+          if (p) {
+            const wRes = await fetch('https://' + `://open-meteo.com{p.latitude}&longitude=${p.longitude}&current_weather=true`);
+            const wData = await wRes.json();
+            const cur = wData.current_weather;
