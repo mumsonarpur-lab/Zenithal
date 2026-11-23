@@ -42,12 +42,68 @@
     footer { text-align: center; padding: 20px 16px; color: var(--sub); font-size: 14px; border-top: 1px solid rgba(148, 163, 184, 0.15); margin-top: auto; }
     footer a { color: var(--sub); margin: 0 10px; text-decoration: none; }
     footer a:hover { color: var(--accent); }
+
+    /* Zenithal Meet Quick-Launch Card */
+    .zmeet-card {
+      background: linear-gradient(135deg, #1d4ed8 0%, #1e3a8a 100%);
+      color: #ffffff;
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 6px 18px rgba(37, 99, 235, 0.25);
+      text-align: left;
+    }
+    .zmeet-badge {
+      display: inline-block;
+      background: rgba(255, 255, 255, 0.2);
+      padding: 3px 10px;
+      border-radius: 99px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+    .zmeet-card h3 { margin: 0; font-size: 20px; }
+    .zmeet-card p { margin: 6px 0 16px; font-size: 14px; opacity: 0.9; }
+    .zmeet-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+    .zmeet-btn-primary {
+      background: #ffffff;
+      color: #1d4ed8;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    .zmeet-join-group { display: flex; gap: 6px; flex: 1; min-width: 220px; }
+    .zmeet-input {
+      flex: 1;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      background: rgba(255, 255, 255, 0.15);
+      color: #ffffff;
+      font-size: 14px;
+      outline: none;
+    }
+    .zmeet-input::placeholder { color: rgba(255, 255, 255, 0.75); }
+    .zmeet-btn-secondary {
+      background: rgba(255, 255, 255, 0.22);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
   <div class="topbar">
-    <span class="badge">Zenithal Enterprise v6.0</span>
-        <a href="meet.html" class="btn-sm" style="text-decoration: none;">📹 Zenithal Meet</a>
+    <span class="badge">Zenithal Enterprise v7.0</span>
+    <a href="meet.html" class="btn-sm" style="text-decoration: none;">📹 Zenithal Meet</a>
     <button class="btn-sm" onclick="toggleTheme()">Theme</button>
   </div>
 
@@ -55,13 +111,14 @@
     <div class="logo" onclick="location.href='/'">Zenithal</div>
     <p style="color:var(--sub);margin:8px 0 24px;">Enterprise Global Discovery &amp; Intelligence</p>
     <form id="searchForm" style="width:100%;display:flex;flex-direction:column;align-items:center;">
-      <input type="text" id="q" class="box" placeholder="Try: 25 * 16, define zenith, weather Kolkata, 10 km to miles, or newton..." autofocus required>
+      <input type="text" id="q" class="box" placeholder="Try: zenithal meet, 25 * 16, define zenith, weather Kolkata, 10 km to miles..." autofocus required>
       <div style="display:flex;gap:10px;margin-top:16px;">
         <button type="submit" class="btn">Search Zenithal</button>
         <button type="button" class="btn" id="micBtn" onclick="startVoice()">🎤 Voice</button>
       </div>
     </form>
-    <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:18px;max-width:600px;">
+    <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:18px;max-width:650px;">
+      <button type="button" class="chip" onclick="quickSearch('zenithal meet')">📹 Zenithal Meet</button>
       <button type="button" class="chip" onclick="quickSearch('25 * 16')">🧮 Math: 25 * 16</button>
       <button type="button" class="chip" onclick="quickSearch('define zenith')">📖 define zenith</button>
       <button type="button" class="chip" onclick="quickSearch('weather Kolkata')">🌤️ weather Kolkata</button>
@@ -83,8 +140,6 @@
   </footer>
 
   <script src="/data.js"></script>
-  <script>
-      <script src="/data.js"></script>
   <script>
     document.documentElement.setAttribute('data-theme', localStorage.getItem('zenithal_theme') || 'dark');
 
@@ -113,123 +168,39 @@
       rec.start();
     }
 
-    document.getElementById('searchForm').addEventListener('submit', function(e) {
-      e.preventDefault();
-      runSearch();
-    });
-
-    async function runSearch() {
-      const raw = document.getElementById('q').value.trim();
-      if (!raw) return;
-      const lower = raw.toLowerCase();
-
-      if (lower.startsWith('!yt ')) {
-        location.href = 'https://' + '://youtube.com' + encodeURIComponent(raw.slice(4));
-        return;
-      }
-      if (lower.startsWith('!g ')) {
-        location.href = 'https://' + '://google.com' + encodeURIComponent(raw.slice(3));
-        return;
-      }
-
-      const box = document.getElementById('results');
-      document.getElementById('homeBox').style.padding = '24px 20px';
-      box.innerHTML = '<div class="card">Searching Zenithal...</div>';
-
-      // 1. Math Calculator
-      if (/^[0-9+\-*/().\s]+$/.test(raw)) {
-        try {
-          const ans = Function('"use strict";return (' + raw + ')')();
-          box.innerHTML = '<div class="card"><div class="title">🧮 Zenithal Calculator</div><p style="font-size:22px;font-weight:bold;margin:8px 0 0;">' + raw + ' = ' + ans + '</p></div>';
-          return;
-        } catch (err) {}
-      }
-
-      // 2. Unit Converter (e.g. "10 km to miles")
-      const parts = lower.split(' ');
-      if (parts.length === 4 && (parts.at(2) === 'to' || parts.at(2) === 'in')) {
-        const val = parseFloat(parts.at(0));
-        const from = parts.at(1);
-        const to = parts.at(3);
-        const rates = { km_miles: 0.621371, miles_km: 1.60934, m_cm: 100, cm_m: 0.01, kg_lbs: 2.20462, lbs_kg: 0.453592 };
-        let out = null;
-        if (from === 'c' && to === 'f') out = (val * 9 / 5) + 32;
-        else if (from === 'f' && to === 'c') out = (val - 32) * 5 / 9;
-        else if (rates[from + '_' + to]) out = val * rates[from + '_' + to];
-        if (out !== null && !isNaN(out)) {
-          box.innerHTML = '<div class="card"><div class="title">⚖️ Zenithal Unit Converter</div><p style="font-size:22px;font-weight:bold;margin:8px 0 0;">' + val + ' ' + from.toUpperCase() + ' = ' + out.toFixed(2) + ' ' + to.toUpperCase() + '</p></div>';
-          return;
-        }
-      }
-
-      // 3. Dictionary (e.g. "define zenith")
-      if (lower.startsWith('define ')) {
-        const word = raw.slice(7).trim();
-        try {
-          const dRes = await fetch('https://' + 'api.dictionaryapi.dev/api/v2/entries/en/' + encodeURIComponent(word));
-          if (dRes.ok) {
-            const dData = await dRes.json();
-            const entry = dData.at(0);
-            const meaning = entry.meanings.at(0);
-            const def = meaning.definitions.at(0).definition;
-            box.innerHTML = '<div class="card"><div class="title">📖 Dictionary: ' + entry.word + ' (' + meaning.partOfSpeech + ')</div><p style="margin:8px 0 0;">' + def + '</p></div>';
-            return;
-          }
-        } catch (err) {}
-      }
-
-      // 4. Live Weather (e.g. "weather Kolkata")
-      if (lower.startsWith('weather ')) {
-        const city = raw.slice(8).trim();
-        try {
-          const gRes = await fetch('https://' + '://open-meteo.com' + encodeURIComponent(city));
-          const gData = await gRes.json();
-          const p = gData.results.at(0);
-          if (p) {
-            const wRes = await fetch('https://' + '://open-meteo.com' + p.latitude + '&longitude=' + p.longitude + '&current_weather=true');
-            const wData = await wRes.json();
-            const cur = wData.current_weather;
-            box.innerHTML = '<div class="card"><div class="title">🌤️ Live Weather: ' + p.name + ', ' + p.country + '</div><p style="font-size:22px;font-weight:bold;margin:8px 0 4px;">' + cur.temperature + '°C</p><p style="color:var(--sub);margin:0;">Wind Speed: ' + cur.windspeed + ' km/h</p></div>';
-            return;
-          }
-        } catch (err) {}
-      }
-
-      // 5. Zenithal Original Database (data.js)
-      let htmlOut = '';
-      if (typeof ZENITHAL_DB !== 'undefined') {
-        const matches = ZENITHAL_DB.filter(function(item) {
-          return item.title.toLowerCase().includes(lower) || item.keywords.some(function(k) { return lower.includes(k) || k.includes(lower); });
-        });
-        for (let i = 0; i < matches.length; i++) {
-          const m = matches.at(i);
-          htmlOut += '<div class="card" style="border-left:4px solid #3b82f6;"><div style="font-size:12px;color:#60a5fa;font-weight:bold;">⭐ ZENITHAL ORIGINAL • ' + m.category.toUpperCase() + '</div><div class="title" style="margin-top:4px;">' + m.title + '</div><p style="margin:8px 0 6px;">' + m.summary + '</p><p style="color:var(--sub);font-size:14px;margin:0;">' + m.example + '</p></div>';
-        }
-      }
-
-      // 6. Live Wikipedia Search
-      const apiUrl = 'https://' + 'en.wikipedia.org/w/api.php?action=query&list=search&format=json&origin=*&srsearch=' + encodeURIComponent(raw);
-      const res = await fetch(apiUrl);
-      const data = await res.json();
-      const items = (data.query && data.query.search) || [];
-      if (!items.length && !htmlOut) {
-        box.innerHTML = '<div class="card">No instant results found for "' + raw + '".</div>';
-        return;
-      }
-      for (let i = 0; i < items.length; i++) {
-        const item = items.at(i);
-        const wUrl = 'https://' + 'en.wikipedia.org/wiki/' + encodeURIComponent(item.title);
-        htmlOut += '<div class="card"><a class="title" href="' + wUrl + '" target="_blank">' + item.title + '</a><p style="color:var(--sub);margin:6px 0 0;">' + item.snippet + '...</p></div>';
-      }
-      box.innerHTML = htmlOut;
+    // Zenithal Meet Quick-Launch Functions
+    function generateZMeetCode() {
+      const chars = 'abcdefghijklmnopqrstuvwxyz';
+      const part = (len) => Array.from({ length: len }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
+      return `${part(3)}-${part(4)}-${part(3)}`;
     }
-    const urlQuery = new URLSearchParams(window.location.search).get('q');
-    if (urlQuery) {
-      document.getElementById('q').value = urlQuery;
-      runSearch();
-    }
-  </script>
-</body>
-</html>
 
-    
+    function launchInstantZMeet() {
+      const roomCode = generateZMeetCode();
+      window.location.href = `meet.html?room=${roomCode}`;
+    }
+
+    function joinExistingZMeet() {
+      const input = document.getElementById('zmeet-room-input').value.trim();
+      if (!input) {
+        alert('Please enter a meeting code or link!');
+        return;
+      }
+      const roomCode = input.includes('room=') ? input.split('room=')[1].split('&')[0] : input;
+      window.location.href = `meet.html?room=${encodeURIComponent(roomCode)}`;
+    }
+
+    function getZenithalMeetWidget(query) {
+      const q = query.toLowerCase().trim();
+      const triggers = ['meet', 'zenithal meet', 'video call', 'start meeting', 'join meeting', 'vmeet'];
+      const isTriggered = triggers.some(word => q === word || q.includes('zenithal meet') || q.includes('video call'));
+      if (!isTriggered) return '';
+
+      return `
+        <div class="zmeet-card">
+          <span class="zmeet-badge">ZENITHAL ECOSYSTEM</span>
+          <h3>📹 Zenithal Meet</h3>
+          <p>Fast, secure video meetings directly in your browser. Start an instant room or join with a code.</p>
+          <div class="zmeet-actions">
+            <button type="button" class="zmeet-btn-primary" onclick="launchInstantZMeet()">+ New Meeting</button>
+            <div class="zmeet-join-group">
