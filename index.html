@@ -211,4 +211,139 @@
         '<span class="zmeet-badge">ZENITHAL ECOSYSTEM</span>' +
         '<h3>📹 Zenithal Meet</h3>' +
         '<p>Fast, secure video meetings directly in your browser. Start an instant room or join with a code.</p>' +
-        '<div class="zmeet-actions">' +
+        '<div class="zmeet-actions">' +          '<button type="button" class="zmeet-btn-primary" onclick="launchInstantZMeet()">+ New Meeting</button>' +
+          '<div class="zmeet-join-group">' +
+            '<input type="text" id="zmeet-room-input" class="zmeet-input" placeholder="Enter code (e.g. abc-defg-hij)" />' +
+            '<button type="button" class="zmeet-btn-secondary" onclick="joinExistingZMeet()">Join</button>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    }
+
+    document.getElementById('searchForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      runSearch();
+    });
+
+    async function runSearch() {
+      const raw = document.getElementById('q').value.trim();
+      if (!raw) {
+        document.getElementById('q').focus();
+        return;
+      }
+      const lower = raw.toLowerCase();
+
+      if (lower.startsWith('!yt ')) {
+        location.href = 'https://youtube.com' + encodeURIComponent(raw.slice(4));
+        return;
+      }
+      if (lower.startsWith('!g ')) {
+        location.href = 'https://google.com' + encodeURIComponent(raw.slice(3));
+        return;
+      }
+
+      const box = document.getElementById('results');
+      document.getElementById('homeBox').style.padding = '24px 20px';
+      box.innerHTML = '<div class="card">Searching Zenithal...</div>';
+
+      // 0. Zenithal Meet Quick-Launch Widget
+      const meetCardHTML = getZenithalMeetWidget(raw);
+
+      // 1. Math Calculator
+      if (/^[0-9+\-*/().\s]+$/.test(raw)) {
+        try {
+          const ans = Function('"use strict";return (' + raw + ')')();
+          box.innerHTML = meetCardHTML + '<div class="card"><div class="title">🧮 Zenithal Calculator</div><p style="font-size:22px;font-weight:bold;margin:8px 0 0;">' + raw + ' = ' + ans + '</p></div>';
+          return;
+        } catch (err) {}
+      }
+
+      // 2. Unit Converter (e.g. "10 km to miles")
+      const parts = lower.split(' ');
+      if (parts.length === 4 && (parts.at(2) === 'to' || parts.at(2) === 'in')) {
+        const val = parseFloat(parts.at(0));
+        const from = parts.at(1);
+        const to = parts.at(3);
+        const rates = { km_miles: 0.621371, miles_km: 1.60934, m_cm: 100, cm_m: 0.01, kg_lbs: 2.20462, lbs_kg: 0.453592 };
+        let out = null;
+        if (from === 'c' && to === 'f') out = (val * 9 / 5) + 32;
+        else if (from === 'f' && to === 'c') out = (val - 32) * 5 / 9;
+        else if (rates[from + '_' + to]) out = val * rates[from + '_' + to];
+        if (out !== null && !isNaN(out)) {
+          box.innerHTML = meetCardHTML + '<div class="card"><div class="title">⚖️ Zenithal Unit Converter</div><p style="font-size:22px;font-weight:bold;margin:8px 0 0;">' + val + ' ' + from.toUpperCase() + ' = ' + out.toFixed(2) + ' ' + to.toUpperCase() + '</p></div>';
+          return;
+        }
+      }
+
+      // 3. Dictionary (e.g. "define zenith")
+      if (lower.startsWith('define ')) {
+        const word = raw.slice(7).trim();
+        try {
+          const dRes = await fetch('https://dictionaryapi.dev' + encodeURIComponent(word));
+          if (dRes.ok) {
+            const dData = await dRes.json();
+            const entry = dData.at(0);
+            const meaning = entry.meanings.at(0);
+            const def = meaning.definitions.at(0).definition;
+            box.innerHTML = meetCardHTML + '<div class="card"><div class="title">📖 Dictionary: ' + entry.word + ' (' + meaning.partOfSpeech + ')</div><p style="margin:8px 0 0;">' + def + '</p></div>';
+            return;
+          }
+        } catch (err) {}
+      }
+
+      // 4. Live Weather (e.g. "weather Kolkata")
+      if (lower.startsWith('weather ')) {
+        const city = raw.slice(8).trim();
+        try {
+          const gRes = await fetch('https://open-meteo.com' + encodeURIComponent(city));
+          const gData = await gRes.json();
+          const p = gData.results && gData.results.at(0);
+          if (p) {
+            const wRes = await fetch('https://open-meteo.com' + p.latitude + '&longitude=' + p.longitude + '&current_weather=true');
+            const wData = await wRes.json();
+            const cur = wData.current_weather;
+            box.innerHTML = meetCardHTML + '<div class="card"><div class="title">🌤️ Live Weather: ' + p.name + ', ' + p.country + '</div><p style="font-size:22px;font-weight:bold;margin:8px 0 4px;">' + cur.temperature + '°C</p><p style="color:var(--sub);margin:0;">Wind Speed: ' + cur.windspeed + ' km/h</p></div>';
+            return;
+          }
+        } catch (err) {}
+      }
+
+      // 5. Zenithal Original Database (data.js)
+      let htmlOut = meetCardHTML;
+      if (typeof ZENITHAL_DB !== 'undefined') {
+        const matches = ZENITHAL_DB.filter(function(item) {
+          return item.title.toLowerCase().includes(lower) || item.keywords.some(function(k) { return lower.includes(k) || k.includes(lower); });
+        });
+        for (let i = 0; i < matches.length; i++) {
+          const m = matches.at(i);
+          htmlOut += '<div class="card" style="border-left:4px solid #3b82f6;"><div style="font-size:12px;color:#60a5fa;font-weight:bold;">⭐ ZENITHAL ORIGINAL • ' + m.category.toUpperCase() + '</div><div class="title" style="margin-top:4px;">' + m.title + '</div><p style="margin:8px 0 6px;">' + m.summary + '</p><p style="color:var(--sub);font-size:14px;margin:0;">' + m.example + '</p></div>';
+        }
+      }
+
+      // 6. Live Wikipedia Search
+      const apiUrl = 'https://wikipedia.org' + encodeURIComponent(raw);
+      const res = await fetch(apiUrl);
+      const data = await res.json();
+      const items = (data.query && data.query.search) || [];
+      if (!items.length && !htmlOut) {
+        box.innerHTML = '<div class="card">No instant results found for "' + raw + '".</div>';
+        return;
+      }
+      for (let i = 0; i < items.length; i++) {
+        const item = items.at(i);
+        const wUrl = 'https://wikipedia.org' + encodeURIComponent(item.title);
+        htmlOut += '<div class="card"><a class="title" href="' + wUrl + '" target="_blank">' + item.title + '</a><p style="color:var(--sub);margin:6px 0 0;">' + item.snippet + '...</p></div>';
+      }
+      box.innerHTML = htmlOut;
+    }
+
+    const urlQuery = new URLSearchParams(window.location.search).get('q');
+    if (urlQuery) {
+      document.getElementById('q').value = urlQuery;
+      runSearch();
+    }
+  </script>
+</body>
+</html>
+
+        
