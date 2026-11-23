@@ -192,7 +192,7 @@
         alert('Please enter a meeting code or link!');
         return;
       }
-      let roomCode = input;
+           let roomCode = input;
       if (input.indexOf('room=') !== -1) {
         roomCode = input.split('room=').at(1).split('&').at(0);
       }
@@ -201,9 +201,9 @@
 
     function getZenithalMeetWidget(query) {
       const q = query.toLowerCase().trim();
-      const triggers = ['meet', 'zenithal meet', 'video call', 'start meeting', 'join meeting', 'vmeet'];
+          const triggers = ['zmeet', 'meet', 'zenithal meet', 'gmeet', 'google meet', 'video call', 'start meeting', 'join meeting', 'vmeet'];
       const isTriggered = triggers.some(function(word) {
-        return q === word || q.includes('zenithal meet') || q.includes('video call');
+        return q === word || q.includes('zmeet') || q.includes('zenithal meet') || q.includes('video call');
       });
       if (!isTriggered) return '';
 
