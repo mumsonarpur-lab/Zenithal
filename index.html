@@ -104,14 +104,14 @@
   <div class="topbar">
     <span class="badge">Zenithal Enterprise v7.0</span>
     <a href="meet.html" class="btn-sm" style="text-decoration: none;">📹 Zenithal Meet</a>
-    <button class="btn-sm" onclick="toggleTheme()">Theme</button>
+    <button type="button" class="btn-sm" onclick="toggleTheme()">Theme</button>
   </div>
 
   <div class="home" id="homeBox">
     <div class="logo" onclick="location.href='/'">Zenithal</div>
     <p style="color:var(--sub);margin:8px 0 24px;">Enterprise Global Discovery &amp; Intelligence</p>
     <form id="searchForm" style="width:100%;display:flex;flex-direction:column;align-items:center;">
-      <input type="text" id="q" class="box" placeholder="Try: zenithal meet, 25 * 16, define zenith, weather Kolkata, 10 km to miles..." autofocus required>
+      <input type="text" id="q" class="box" placeholder="Try: zenithal meet, 25 * 16, define zenith, weather Kolkata, 10 km to miles..." autofocus>
       <div style="display:flex;gap:10px;margin-top:16px;">
         <button type="submit" class="btn">Search Zenithal</button>
         <button type="button" class="btn" id="micBtn" onclick="startVoice()">🎤 Voice</button>
@@ -171,13 +171,19 @@
     // Zenithal Meet Quick-Launch Functions
     function generateZMeetCode() {
       const chars = 'abcdefghijklmnopqrstuvwxyz';
-      const part = (len) => Array.from({ length: len }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
-      return `${part(3)}-${part(4)}-${part(3)}`;
+      const part = function(len) {
+        let out = '';
+        for (let i = 0; i < len; i++) {
+          out += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        return out;
+      };
+      return part(3) + '-' + part(4) + '-' + part(3);
     }
 
     function launchInstantZMeet() {
       const roomCode = generateZMeetCode();
-      window.location.href = `meet.html?room=${roomCode}`;
+      window.location.href = 'meet.html?room=' + encodeURIComponent(roomCode);
     }
 
     function joinExistingZMeet() {
@@ -186,21 +192,23 @@
         alert('Please enter a meeting code or link!');
         return;
       }
-      const roomCode = input.includes('room=') ? input.split('room=')[1].split('&')[0] : input;
-      window.location.href = `meet.html?room=${encodeURIComponent(roomCode)}`;
+      let roomCode = input;
+      if (input.indexOf('room=') !== -1) {
+        roomCode = input.split('room=').at(1).split('&').at(0);
+      }
+      window.location.href = 'meet.html?room=' + encodeURIComponent(roomCode);
     }
 
     function getZenithalMeetWidget(query) {
       const q = query.toLowerCase().trim();
       const triggers = ['meet', 'zenithal meet', 'video call', 'start meeting', 'join meeting', 'vmeet'];
-      const isTriggered = triggers.some(word => q === word || q.includes('zenithal meet') || q.includes('video call'));
+      const isTriggered = triggers.some(function(word) {
+        return q === word || q.includes('zenithal meet') || q.includes('video call');
+      });
       if (!isTriggered) return '';
 
-      return `
-        <div class="zmeet-card">
-          <span class="zmeet-badge">ZENITHAL ECOSYSTEM</span>
-          <h3>📹 Zenithal Meet</h3>
-          <p>Fast, secure video meetings directly in your browser. Start an instant room or join with a code.</p>
-          <div class="zmeet-actions">
-            <button type="button" class="zmeet-btn-primary" onclick="launchInstantZMeet()">+ New Meeting</button>
-            <div class="zmeet-join-group">
+      return '<div class="zmeet-card">' +
+        '<span class="zmeet-badge">ZENITHAL ECOSYSTEM</span>' +
+        '<h3>📹 Zenithal Meet</h3>' +
+        '<p>Fast, secure video meetings directly in your browser. Start an instant room or join with a code.</p>' +
+        '<div class="zmeet-actions">' +
