@@ -1,86 +1,346 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Zenithal Meet</title>
-  <link rel="icon" href="image.png" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ZMeet — Zenithal Video Meetings</title>
+  <script src="https://unpkg.com"></script>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, Arial, sans-serif; }
-    body { background: #ffffff; color: #202124; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
-    body.in-call { background: #202124; color: #e8eaed; }
-    header { display: flex; justify-content: space-between; align-items: center; padding: 14px 24px; }
-    .brand { display: flex; align-items: center; gap: 10px; font-size: 1.38rem; color: #5f6368; text-decoration: none; }
-    .brand img { width: 32px; height: 32px; border-radius: 6px; }
-    .brand strong { font-weight: 500; color: #202124; }
-    .header-right { display: flex; align-items: center; gap: 16px; font-size: 0.92rem; color: #5f6368; }
-    .nav-link { color: #1a73e8; text-decoration: none; font-weight: 500; }
-    #lobby { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px; text-align: center; }
-    #lobby h1 { font-size: 2.5rem; font-weight: 400; margin-bottom: 14px; max-width: 640px; }
-    #lobby p { color: #5f6368; font-size: 1.1rem; margin-bottom: 34px; max-width: 520px; }
-    .lobby-actions { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; align-items: center; }
-    .dropdown-wrapper { position: relative; }
-    .btn-blue { background: #1a73e8; color: #fff; border: none; padding: 13px 22px; border-radius: 6px; font-size: 1rem; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 8px; }
-    .btn-blue:hover { background: #1765cc; }
-    .dropdown-menu { display: none; position: absolute; top: 52px; left: 0; width: 270px; background: #fff; border: 1px solid #dadce0; border-radius: 8px; box-shadow: 0 6px 20px rgba(0,0,0,0.15); z-index: 100; text-align: left; }
-    .dropdown-item { padding: 13px 16px; cursor: pointer; font-size: 0.95rem; color: #202124; }
-    .dropdown-item:hover { background: #f1f3f4; }
-    .join-box { display: flex; gap: 8px; }
-    .join-box input { border: 1px solid #dadce0; padding: 12px 16px; border-radius: 6px; font-size: 1rem; width: 240px; outline: none; }
-    .btn-text { background: transparent; color: #1a73e8; border: none; padding: 12px 16px; font-size: 1rem; font-weight: 500; cursor: pointer; border-radius: 6px; }
-    .modal-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); align-items: center; justify-content: center; z-index: 200; }
-    .modal-card { background: #fff; padding: 24px; border-radius: 12px; width: 380px; max-width: 92%; box-shadow: 0 8px 28px rgba(0,0,0,0.25); }
-    .link-copy-box { display: flex; align-items: center; justify-content: space-between; background: #f1f3f4; padding: 10px 12px; border-radius: 8px; margin: 14px 0; font-size: 0.88rem; gap: 8px; }
-    .link-copy-box span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    #preview-screen { display: none; flex: 1; align-items: center; justify-content: center; padding: 20px 40px; gap: 60px; flex-wrap: wrap; }
-    .preview-column { display: flex; flex-direction: column; align-items: center; max-width: 640px; width: 100%; }
-    .preview-box { position: relative; width: 100%; aspect-ratio: 16/9; background: #202124; border-radius: 16px; overflow: hidden; display: flex; align-items: center; justify-content: center; }
-    .preview-box video { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
-    .preview-box video.blurred { filter: blur(10px); }
-    #cam-status-text { position: absolute; color: #fff; font-size: 1.25rem; pointer-events: none; }
-    .preview-name-overlay { position: absolute; top: 16px; left: 20px; color: #fff; font-size: 0.92rem; font-weight: 500; z-index: 5; }
-    .audio-dot { position: absolute; bottom: 16px; left: 18px; width: 28px; height: 28px; border-radius: 50%; background: #a8c7fa; color: #041e49; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: bold; z-index: 5; }
-    .preview-controls { position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%); display: flex; gap: 16px; z-index: 5; }
-    .g-circle-btn { width: 48px; height: 48px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.3); background: rgba(60,64,67,0.85); color: #fff; font-size: 1.15rem; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-    .g-circle-btn.off { background: #ea4335; border-color: #ea4335; }
-    .g-circle-btn.active { background: #8ab4f8; color: #202124; }
-    .device-pills { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; justify-content: center; width: 100%; }
-    .device-pill { display: flex; align-items: center; gap: 6px; border: 1px solid #dadce0; border-radius: 20px; padding: 6px 14px; font-size: 0.85rem; color: #3c4043; background: #fff; cursor: pointer; }
-    .device-pill select { border: none; background: transparent; color: #3c4043; font-size: 0.85rem; outline: none; max-width: 115px; }
-    .ready-panel { display: flex; flex-direction: column; align-items: center; text-align: center; min-width: 280px; gap: 16px; }
-    .ready-panel h2 { font-size: 1.85rem; font-weight: 400; }
-    .name-field { width: 250px; padding: 10px 14px; border: 1px solid #dadce0; border-radius: 24px; font-size: 0.95rem; text-align: center; outline: none; }
-    .ask-join-btn { background: #0b57d0; color: #fff; border: none; padding: 14px 42px; border-radius: 28px; font-size: 1rem; font-weight: 500; cursor: pointer; box-shadow: 0 0 0 2px #fff, 0 0 0 4px #0b57d0; }
-    .other-ways-btn { border: 1px solid #dadce0; background: #fff; color: #0b57d0; padding: 9px 20px; border-radius: 20px; font-size: 0.88rem; font-weight: 500; cursor: pointer; }
-    #call-screen { display: none; flex: 1; flex-direction: column; height: 100%; position: relative; }
-    .main-area { flex: 1; display: flex; padding: 16px; gap: 16px; overflow: hidden; }
-    .video-grid { flex: 1; display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; align-items: center; justify-content: center; }
-    .video-card { position: relative; background: #3c4043; border-radius: 12px; overflow: hidden; width: 100%; height: 100%; max-height: 76vh; display: flex; align-items: center; justify-content: center; border: 3px solid transparent; }
-    .video-card.hand-raised { border-color: #fbbc04; }
-    .video-card video { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
-    .video-card video.blurred { filter: blur(10px); }
-    .video-card video.screen-share { transform: none; object-fit: contain; }
-    .name-tag { position: absolute; bottom: 12px; left: 14px; background: rgba(0,0,0,0.65); color: #fff; padding: 5px 12px; border-radius: 6px; font-size: 0.88rem; }
-    .hand-badge { position: absolute; top: 12px; left: 14px; background: #fbbc04; color: #202124; padding: 4px 10px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; display: none; }
-    .video-card.hand-raised .hand-badge { display: block; }
-    #ready-popup { position: absolute; bottom: 92px; left: 24px; width: 340px; background: #fff; color: #202124; padding: 18px; border-radius: 12px; box-shadow: 0 6px 24px rgba(0,0,0,0.35); z-index: 60; }
-    #ready-popup h3 { font-size: 1.05rem; font-weight: 500; margin-bottom: 8px; display: flex; justify-content: space-between; }
-    .ready-link-bar { display: flex; align-items: center; justify-content: space-between; background: #f1f3f4; padding: 8px 10px; border-radius: 6px; font-size: 0.82rem; gap: 6px; margin-top: 10px; }
-    .ready-link-bar span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    #reaction-layer { position: absolute; bottom: 90px; left: 40px; pointer-events: none; z-index: 50; }
-    .floating-emoji { position: absolute; bottom: 0; font-size: 2.2rem; animation: floatUp 2.5s ease-out forwards; }
-    @keyframes floatUp { 0% { transform: translateY(0) scale(0.8); opacity: 1; } 100% { transform: translateY(-260px) scale(1.3); opacity: 0; } }
-    #emoji-bar { display: none; position: absolute; bottom: 84px; left: 50%; transform: translateX(-50%); background: #3c4043; padding: 8px 14px; border-radius: 30px; gap: 10px; z-index: 40; }
-    #emoji-bar button { background: none; border: none; font-size: 1.5rem; cursor: pointer; }
-    .side-drawer { display: none; width: 320px; background: #fff; color: #202124; border-radius: 12px; flex-direction: column; overflow: hidden; }
-    .drawer-header { padding: 16px; font-weight: 600; border-bottom: 1px solid #dadce0; display: flex; justify-content: space-between; }
-    .drawer-body { flex: 1; padding: 14px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; font-size: 0.92rem; }
-    .person-row, .msg { background: #f1f3f4; padding: 8px 12px; border-radius: 8px; display: flex; justify-content: space-between; }
-    .chat-input { display: flex; padding: 10px; border-top: 1px solid #dadce0; }
-    .chat-input input { flex: 1; border: none; outline: none; padding: 8px; font-size: 0.95rem; }
-    .chat-input button { background: #1a73e8; color: #fff; border: none; padding: 8px 14px; border-radius: 6px; cursor: pointer; }
-    .bottom-bar { height: 78px; display: flex; justify-content: space-between; align-items: center; padding: 0 24px; }
-    .room-info { font-size: 0.92rem; display: flex; align-items: center; gap: 10px; }
-    .copy-btn { background: #3c4043; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; }
-    .controls { display: flex; gap: 12px; }
-    .ctrl-btn { width: 46px; height: 46px; border-radius: 50%; border: none; background: #3c4043; color: #fff; font-size: 1.15rem; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+      background: #202124;
+      color: #e8eaed;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 24px;
+      background: #202124;
+      border-bottom: 1px solid #3c4043;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 21px;
+      font-weight: 600;
+      color: #fff;
+      text-decoration: none;
+    }
+    .brand span { color: #8ab4f8; font-weight: 700; }
+    .host-badge {
+      background: rgba(138, 180, 248, 0.15);
+      color: #8ab4f8;
+      padding: 4px 10px;
+      border-radius: 99px;
+      font-size: 12px;
+      font-weight: 600;
+      display: none;
+    }
+    .clock { color: #9aa0a6; font-size: 14px; }
+
+    /* Lobby / Green Room */
+    .lobby {
+      flex: 1;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 48px;
+      padding: 32px 24px;
+      max-width: 1150px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    .preview-box {
+      flex: 1;
+      min-width: 320px;
+      max-width: 620px;
+      background: #171717;
+      border-radius: 16px;
+      overflow: hidden;
+      position: relative;
+      aspect-ratio: 16 / 9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid #3c4043;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    }
+    video#localPreview {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transform: scaleX(-1);
+    }
+    .cam-off-msg {
+      position: absolute;
+      color: #9aa0a6;
+      font-size: 16px;
+      display: none;
+    }
+    .preview-controls {
+      position: absolute;
+      bottom: 16px;
+      display: flex;
+      gap: 14px;
+    }
+    .circle-btn {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      border: 1px solid #5f6368;
+      background: rgba(32, 33, 36, 0.85);
+      color: #fff;
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .circle-btn.off { background: #ea4335; border-color: #ea4335; }
+
+    /* Join Panel */
+    .join-panel {
+      flex: 1;
+      min-width: 300px;
+      max-width: 400px;
+      text-align: center;
+    }
+    .join-panel h1 { font-size: 28px; font-weight: 500; margin: 0 0 10px; }
+    .room-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #303134;
+      padding: 8px 14px;
+      border-radius: 99px;
+      font-size: 14px;
+      color: #8ab4f8;
+      margin-bottom: 18px;
+      border: 1px solid #3c4043;
+    }
+    .copy-btn {
+      background: none;
+      border: none;
+      color: #e8eaed;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 13px;
+    }
+    .input-field {
+      width: 100%;
+      padding: 13px 16px;
+      border-radius: 8px;
+      border: 1px solid #5f6368;
+      background: #303134;
+      color: #fff;
+      font-size: 15px;
+      margin-bottom: 12px;
+      outline: none;
+    }
+    .input-field:focus { border-color: #8ab4f8; }
+    .role-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 16px;
+      font-size: 14px;
+      color: #bdc1c6;
+      cursor: pointer;
+    }
+    .btn-join {
+      width: 100%;
+      padding: 13px;
+      border-radius: 99px;
+      border: none;
+      background: #8ab4f8;
+      color: #202124;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-bottom: 10px;
+    }
+    .btn-join:hover { background: #aecbfa; }
+    .btn-new {
+      width: 100%;
+      padding: 11px;
+      border-radius: 99px;
+      border: 1px solid #5f6368;
+      background: transparent;
+      color: #8ab4f8;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    /* Guest Waiting Overlay */
+    #waitingOverlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(32, 33, 36, 0.96);
+      z-index: 999;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 24px;
+    }
+    .spinner {
+      width: 44px;
+      height: 44px;
+      border: 4px solid #3c4043;
+      border-top-color: #8ab4f8;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 18px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Google Meet Host "Admit / Deny" Popup */
+    #admitQueue {
+      position: fixed;
+      bottom: 24px;
+      left: 24px;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-width: 360px;
+    }
+    .admit-card {
+      background: #303134;
+      border: 1px solid #5f6368;
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+      animation: slideUp 0.25s ease;
+    }
+    @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    .admit-card h4 { margin: 0 0 6px; font-size: 15px; color: #fff; }
+    .admit-card p { margin: 0 0 14px; font-size: 13px; color: #bdc1c6; }
+    .admit-actions { display: flex; justify-content: flex-end; gap: 10px; }
+    .btn-deny {
+      background: transparent;
+      border: 1px solid #5f6368;
+      color: #f28b82;
+      padding: 7px 14px;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn-admit {
+      background: #8ab4f8;
+      border: none;
+      color: #202124;
+      padding: 7px 16px;
+      border-radius: 6px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    /* Active Video Call Frame */
+    #meetingContainer {
+      display: none;
+      width: 100%;
+      height: calc(100vh - 57px);
+    }
+  </style>
+</head>
+<body>
+  <div class="navbar">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <a href="/" class="brand">📹 <span>ZMeet</span> <small style="font-size:13px;color:#9aa0a6;font-weight:400;">by Zenithal</small></a>
+      <span class="host-badge" id="hostBadge">👑 Host Controls Active</span>
+    </div>
+    <div class="clock" id="clock"></div>
+  </div>
+
+  <!-- Pre-Join Green Room -->
+  <div class="lobby" id="lobbyView">
+    <div class="preview-box">
+      <video id="localPreview" autoplay muted playsinline></video>
+      <div class="cam-off-msg" id="camOffMsg">Camera is off</div>
+      <div class="preview-controls">
+        <button type="button" class="circle-btn" id="micToggle" onclick="togglePreviewMic()">🎤</button>
+        <button type="button" class="circle-btn" id="camToggle" onclick="togglePreviewCam()">📷</button>
+      </div>
+    </div>
+
+    <div class="join-panel">
+      <h1 id="lobbyTitle">Ready to join?</h1>
+      <div class="room-pill">
+        <span id="roomLabel">zen-meet-room</span>
+        <button type="button" class="copy-btn" onclick="copyInviteLink()">📋 Copy invite link</button>
+      </div>
+
+      <input type="text" id="userName" class="input-field" placeholder="Enter your name" />
+      <input type="text" id="roomInput" class="input-field" placeholder="Meeting code" />
+
+      <label class="role-toggle">
+        <input type="checkbox" id="isHostCheckbox" />
+        <span>Start as Meeting Host (Approve guests)</span>
+      </label>
+
+      <button type="button" class="btn-join" id="mainJoinBtn" onclick="handleJoinClick()">Join now</button>
+      <button type="button" class="btn-new" onclick="generateNewRoom()">+ Create new meeting as Host</button>
+    </div>
+  </div>
+
+  <!-- Guest Knock / Waiting Screen -->
+  <div id="waitingOverlay">
+    <div class="spinner"></div>
+    <h2 id="waitHeading">Asking to be let in...</h2>
+    <p id="waitSub" style="color:#9aa0a6;max-width:400px;">You'll join the ZMeet call automatically as soon as the host lets you in.</p>
+    <button type="button" class="btn-new" style="max-width:200px;margin-top:16px;" onclick="location.href='/'">Cancel</button>
+  </div>
+
+  <!-- Host Admit / Deny Popup Container -->
+  <div id="admitQueue"></div>
+
+  <!-- Live Video Call -->
+  <div id="meetingContainer"></div>
+
+  <script>
+    function updateClock() {
+      const now = new Date();
+      document.getElementById('clock').textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + ' • ' + now.toDateString();
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    function makeCode() {
+      const c = 'abcdefghijklmnopqrstuvwxyz';
+      const part = function(n) {
+        let out = '';
+        for (let i = 0; i < n; i++) out += c.charAt(Math.floor(Math.random() * c.length));
+        return out;
+      };
+      return part(3) + '-' + part(4) + '-' + part(3);
+    }
+
+    const params = new URLSearchParams(window.location.search);
+    const hasUrlRoom = Boolean(params.get('room'));
+    let currentRoom = params.get('room') || makeCode();
+
+    document.getElementById('roomInput').value = currentRoom;
+    document.getElementById('roomLabel').textContent = currentRoom;
+
+    // If opened with ?host=1 or without a ?room= parameter, default to Host mode
+    if (params.get('host') === '1' || !hasUrlRoom) {
+      document.getElementById('isHostCheckbox').checked = true;
+      document.getElementById('userName').value = 'Abhinit Pandey';
+      document.getElementById('mainJoinBtn').textContent = 'Start meeting as Host';
+    } else {
+      document.getElementById('isHostCheckbox').checked = false;
+      document.getElementById('mainJoinBtn').textContent = 'Ask to join';
+    }
+
