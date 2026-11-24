@@ -1,608 +1,291 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Zenithal — Enterprise Global Discovery & Intelligence</title>
-  <meta name="description" content="Zenithal is an original web search and student discovery engine created by 12-year-old developer Abhinit Pandey in West Bengal, India." />
-  <link rel="manifest" href="manifest.json" />
-  <link rel="icon" href="image.png" />
-
-  <!-- Google AdSense: Replace ca-pub-XXXXXXXXXXXXXXXX with your actual AdSense Publisher ID -->
-  <script async src="https://googlesyndication.com"
-     crossorigin="anonymous"></script>
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zenithal — Official Web Search Engine</title>
+  <meta name="description" content="Zenithal is a fast, clean, and modern web search engine built by Abhinit Pandey with instant math, dictionary, weather, unit converter, and voice search." />
+  <link rel="canonical" href="https://vercel.app" />
+  <meta property="og:site_name" content="Zenithal" />
+  <meta property="og:title" content="Zenithal — Official Web Search Engine" />
+  <meta property="og:description" content="Zenithal is a fast, clean, and modern web search engine built by Abhinit Pandey." />
+  <meta property="og:url" content="https://vercel.app" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Zenithal",
+    "alternateName": ["Zenithal Search", "Zenithal Search Engine"],
+    "url": "https://vercel.app"
+  }
+  </script>
+  <link rel="manifest" href="/manifest.json">
   <style>
-    :root {
-      --bg: #070b14;
-      --card: #0d1424;
-      --input-bg: #11192c;
-      --border: #1e2d4a;
-      --text: #f1f5f9;
-      --muted: #94a3b8;
-      --accent: #38bdf8;
-      --btn: #1d4ed8;
-      --btn-hover: #2563eb;
-      --chip-bg: #161f33;
-    }
+    :root[data-theme="dark"] { --bg: #0f172a; --card: #1e293b; --text: #f1f5f9; --sub: #94a3b8; --accent: #3b82f6; --border: #334155; }
+    :root[data-theme="light"] { --bg: #f8fafc; --card: #ffffff; --text: #0f172a; --sub: #475569; --accent: #2563eb; --border: #cbd5e1; }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
+    .topbar { display: flex; justify-content: flex-end; align-items: center; gap: 10px; padding: 14px 20px; }
+    .badge { background: rgba(16, 185, 129, 0.15); color: #34d399; padding: 5px 12px; border-radius: 99px; font-size: 12px; font-weight: 600; }
+    .btn-sm { background: var(--card); color: var(--text); border: 1px solid var(--border); padding: 6px 14px; border-radius: 8px; cursor: pointer; font-size: 13px; }
+    .home { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; text-align: center; }
+    .logo { font-size: 56px; font-weight: 800; color: var(--accent); letter-spacing: -1px; cursor: pointer; }
+    .box { width: 100%; max-width: 580px; padding: 14px 20px; border-radius: 99px; border: 1px solid var(--border); background: var(--card); color: var(--text); font-size: 16px; outline: none; }
+    .box:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25); }
+    .btn { background: var(--accent); color: #fff; border: none; padding: 11px 22px; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer; }
+    .btn:hover { opacity: 0.92; }
+    .chip { padding: 6px 12px; border-radius: 99px; border: 1px solid var(--border); background: var(--card); color: var(--text); cursor: pointer; font-size: 13px; }
+    .chip:hover { border-color: var(--accent); }
+    .main { width: 100%; max-width: 720px; margin: 0 auto; padding: 0 20px 30px; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 18px 20px; margin-bottom: 14px; text-align: left; }
+    .title { font-size: 18px; font-weight: 700; color: #60a5fa; text-decoration: none; }
+    footer { text-align: center; padding: 20px 16px; color: var(--sub); font-size: 14px; border-top: 1px solid rgba(148, 163, 184, 0.15); margin-top: auto; }
+    footer a { color: var(--sub); margin: 0 10px; text-decoration: none; }
+    footer a:hover { color: var(--accent); }
 
-    body.light {
-      --bg: #f8fafc;
-      --card: #ffffff;
-      --input-bg: #ffffff;
-      --border: #cbd5e1;
-      --text: #0f172a;
-      --muted: #475569;
-      --accent: #0284c7;
-      --btn: #1d4ed8;
-      --btn-hover: #1e40af;
-      --chip-bg: #e2e8f0;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    }
-
-    body {
-      background-color: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 16px;
-      transition: background 0.25s, color 0.25s;
-    }
-
-    /* Top Bar */
-    .top-bar {
-      width: 100%;
-      max-width: 760px;
-      display: flex;
-      justify-content: flex-end;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 42px;
-    }
-
-    .version-badge {
-      background: rgba(16, 185, 129, 0.14);
-      color: #34d399;
-      border: 1px solid rgba(52, 211, 153, 0.35);
-      padding: 6px 14px;
-      border-radius: 999px;
-      font-size: 0.82rem;
-      font-weight: 600;
-    }
-
-    .theme-btn {
-      background: var(--chip-bg);
-      color: var(--text);
-      border: 1px solid var(--border);
-      padding: 6px 16px;
-      border-radius: 999px;
-      font-size: 0.85rem;
-      font-weight: 600;
-      cursor: pointer;
-    }
-
-    /* Hero Section */
-    .main-container {
-      width: 100%;
-      max-width: 640px;
-      text-align: center;
-      flex: 1;
-    }
-
-    .logo {
-      font-size: 3.1rem;
-      font-weight: 800;
-      color: #38bdf8;
-      letter-spacing: -1px;
-      margin-bottom: 8px;
-    }
-
-    .subtitle {
-      color: var(--muted);
-      font-size: 1rem;
-      margin-bottom: 28px;
-    }
-
-    /* Search Box */
-    .search-box {
-      width: 100%;
-      background: var(--input-bg);
-      border: 1.5px solid var(--border);
-      border-radius: 999px;
-      padding: 14px 22px;
-      font-size: 1.05rem;
-      color: var(--text);
-      outline: none;
-      margin-bottom: 18px;
-      transition: border-color 0.2s;
-    }
-
-    .search-box:focus {
-      border-color: #38bdf8;
-    }
-
-    .action-buttons {
-      display: flex;
-      justify-content: center;
-      gap: 12px;
-      margin-bottom: 22px;
-    }
-
-    .btn-primary {
-      background: var(--btn);
+    /* Zenithal Meet Quick-Launch Card */
+    .zmeet-card {
+      background: linear-gradient(135deg, #1d4ed8 0%, #1e3a8a 100%);
       color: #ffffff;
-      border: none;
-      padding: 12px 24px;
-      border-radius: 12px;
-      font-size: 0.98rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-
-    .btn-primary:hover {
-      background: var(--btn-hover);
-    }
-
-    /* Quick Chips */
-    .chips {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 10px;
-      margin-bottom: 30px;
-    }
-
-    .chip {
-      background: var(--chip-bg);
-      color: var(--text);
-      border: 1px solid var(--border);
-      padding: 8px 16px;
-      border-radius: 999px;
-      font-size: 0.88rem;
-      cursor: pointer;
-      transition: transform 0.15s, border-color 0.2s;
-    }
-
-    .chip:hover {
-      border-color: #38bdf8;
-      transform: translateY(-1px);
-    }
-
-    /* Results Area */
-    #results-area {
-      text-align: left;
-      margin-bottom: 24px;
-      display: none;
-    }
-
-    .result-card {
-      background: var(--card);
-      border: 1px solid var(--border);
       border-radius: 14px;
-      padding: 16px 20px;
-      margin-bottom: 12px;
-    }
-
-    .result-card h3 {
-      color: #38bdf8;
-      margin-bottom: 6px;
-      font-size: 1.05rem;
-    }
-
-    .result-card a {
-      color: #38bdf8;
-      text-decoration: none;
-      font-weight: 600;
-    }
-
-    .result-card p {
-      color: var(--muted);
-      font-size: 0.92rem;
-      line-height: 1.5;
-    }
-
-    /* AdSense Slot */
-    .ad-container {
-      width: 100%;
-      margin: 18px 0;
-      text-align: center;
-      overflow: hidden;
-    }
-
-    /* About Card */
-    .about-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-left: 4px solid #2563eb;
-      border-radius: 16px;
-      padding: 20px 22px;
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 6px 18px rgba(37, 99, 235, 0.25);
       text-align: left;
-      margin-top: 10px;
     }
-
-    .about-tag {
-      color: #38bdf8;
-      font-size: 0.74rem;
+    .zmeet-badge {
+      display: inline-block;
+      background: rgba(255, 255, 255, 0.2);
+      padding: 3px 10px;
+      border-radius: 99px;
+      font-size: 11px;
       font-weight: 700;
-      letter-spacing: 0.6px;
-      text-transform: uppercase;
-      margin-bottom: 6px;
-    }
-
-    .about-card h2 {
-      font-size: 1.15rem;
-      margin-bottom: 10px;
-      color: var(--text);
-    }
-
-    .about-card p {
-      font-size: 0.93rem;
-      line-height: 1.55;
-      color: var(--text);
-      margin-bottom: 10px;
-    }
-
-    .about-card .mission {
-      color: var(--muted);
-      font-size: 0.88rem;
-      margin-bottom: 0;
-    }
-
-    /* Footer */
-    footer {
-      width: 100%;
-      max-width: 640px;
-      text-align: center;
-      padding: 28px 0 12px;
-      color: var(--muted);
-      font-size: 0.85rem;
-    }
-
-    .footer-links {
+      letter-spacing: 0.5px;
       margin-bottom: 8px;
     }
-
-    .footer-links a {
-      color: var(--muted);
-      text-decoration: none;
-      margin: 0 8px;
+    .zmeet-card h3 { margin: 0; font-size: 20px; }
+    .zmeet-card p { margin: 6px 0 16px; font-size: 14px; opacity: 0.9; }
+    .zmeet-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+    .zmeet-btn-primary {
+      background: #ffffff;
+      color: #1d4ed8;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
     }
-
-    .footer-links a:hover {
-      color: #38bdf8;
+    .zmeet-join-group { display: flex; gap: 6px; flex: 1; min-width: 220px; }
+    .zmeet-input {
+      flex: 1;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      background: rgba(255, 255, 255, 0.15);
+      color: #ffffff;
+      font-size: 14px;
+      outline: none;
+    }
+    .zmeet-input::placeholder { color: rgba(255, 255, 255, 0.75); }
+    .zmeet-btn-secondary {
+      background: rgba(255, 255, 255, 0.22);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
-
-  <div class="top-bar">
-    <span class="version-badge">Zenithal Enterprise v6.0</span>
-    <button class="theme-btn" onclick="toggleTheme()">Theme</button>
+  <div class="topbar">
+    <span class="badge">Zenithal Enterprise v6.0</span>
+        <a href="meet.html" class="btn-sm" style="text-decoration: none;">📹 Zenithal Meet</a>
+    <span class="badge">Zenithal Enterprise v7.0</span>
+    <a href="meet.html" class="btn-sm" style="text-decoration: none;">📹 Zenithal Meet</a>
+    <button class="btn-sm" onclick="toggleTheme()">Theme</button>
   </div>
 
-  <main class="main-container">
-    <h1 class="logo">Zenithal</h1>
-    <p class="subtitle">Enterprise Global Discovery &amp; Intelligence</p>
-
-    <input
-      type="text"
-      id="searchInput"
-      class="search-box"
-      placeholder="Search Zenithal or ask anything..."
-      onkeydown="if(event.key==='Enter') runSearch()"
-    />
-
-    <div class="action-buttons">
-      <button class="btn-primary" onclick="runSearch()">Search Zenithal</button>
-      <button class="btn-primary" onclick="startVoiceSearch()">🎤 Voice</button>
-    </div>
-
-    <div class="chips">
-      <button class="chip" onclick="quickSearch('Math: 25 * 16')">🧮 Math: 25 * 16</button>
-      <button class="chip" onclick="quickSearch('define zenith')">📖 define zenith</button>
-      <button class="chip" onclick="quickSearch('weather Kolkata')">☀️ weather Kolkata</button>
-      <button class="chip" onclick="quickSearch('10 km to miles')">⚖️ 10 km to miles</button>
-      <button class="chip" onclick="quickSearch(&quot;Newton's Laws&quot;)">🔬 Newton's Laws</button>
-    </div>
-
-    <!-- Instant & Web Results -->
-    <div id="results-area"></div>
-
-    <!-- Google AdSense Display Unit -->
-    <div class="ad-container">
-      <ins class="adsbygoogle"
-           style="display:block"
-           data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
-           data-ad-slot="1234567890"
-           data-ad-format="auto"
-           data-full-width-responsive="true"></ins>
-      <script>
-        (adsbygoogle = window.adsbygoogle || []).push({});
-      </script>
-    </div>
-
-    <!-- About Zenithal Card -->
-    <section class="about-card">
-      <div class="about-tag">★ ZENITHAL ORIGINAL • ZENITHAL OFFICIAL</div>
-      <h2>About Zenithal Search Engine</h2>
-      <p>
-        Zenithal is an original web search and student discovery engine created by 12-year-old developer Abhinit Pandey in West Bengal, India.
-      </p>
-      <p class="mission">
-        Mission: Fast, clean, distraction-free answers for students and curious minds worldwide.
-      </p>
-    </section>
-  </main>
-
-  <footer>
-    <div class="footer-links">
-      <a href="about.html">About</a> •
-      <a href="privacy.html">Privacy Policy</a> •
-      <a href="terms.html">Terms</a> •
-      <a href="contact.html">Contact</a>
-    </div>
-    <div>© 2026 Zenithal Search Engine • Built by Abhinit Pandey</div>
+  <div class="home" id="homeBox">
+    <div class="logo" onclick="location.href='/'">Zenithal</div>
+    <p style="color:var(--sub);margin:8px 0 24px;">Enterprise Global Discovery &amp; Intelligence</p>
+    <form id="searchForm" style="width:100%;display:flex;flex-direction:column;align-items:center;">
+      <input type="text" id="q" class="box" placeholder="Try: 25 * 16, define zenith, weather Kolkata, 10 km to miles, or newton..." autofocus required>
+      <input type="text" id="q" class="box" placeholder="Try: zenithal meet, 25 * 16, define zenith, weather Kolkata, 10 km to miles..." autofocus required>
+      <div style="display:flex;gap:10px;margin-top:16px;">
+        <button type="submit" class="btn">Search Zenithal</button>
+        <button type="button" class="btn" id="micBtn" onclick="startVoice()">🎤 Voice</button>
+      </div>
+    </form>
+    <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:18px;max-width:600px;">
+    <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:18px;max-width:650px;">
+      <button type="button" class="chip" onclick="quickSearch('zenithal meet')">📹 Zenithal Meet</button>
+      <button type="button" class="chip" onclick="quickSearch('25 * 16')">🧮 Math: 25 * 16</button>
+      <button type="button" class="chip" onclick="quickSearch('define zenith')">📖 define zenith</button>
+      <button type="button" class="chip" onclick="quickSearch('weather Kolkata')">🌤️ weather Kolkata</button>
+@@ -83,8 +140,6 @@
   </footer>
 
-  <!-- Load your local search index if present -->
-  <script src="data.js"></script>
-
+  <script src="/data.js"></script>
   <script>
-    function toggleTheme() {
-      document.body.classList.toggle("light");
+      <script src="/data.js"></script>
+  <script>
+    document.documentElement.setAttribute('data-theme', localStorage.getItem('zenithal_theme') || 'dark');
+
+@@ -113,123 +168,39 @@
+      rec.start();
     }
 
-    function quickSearch(query) {
-      document.getElementById("searchInput").value = query;
+    document.getElementById('searchForm').addEventListener('submit', function(e) {
+      e.preventDefault();
       runSearch();
-    }
+    });
 
-    function startVoiceSearch() {
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      if (!SpeechRecognition) {
-        alert("Voice search is not supported in this browser.");
+    async function runSearch() {
+      const raw = document.getElementById('q').value.trim();
+      if (!raw) return;
+      const lower = raw.toLowerCase();
+
+      if (lower.startsWith('!yt ')) {
+        location.href = 'https://' + '://youtube.com' + encodeURIComponent(raw.slice(4));
         return;
       }
-      const recognition = new SpeechRecognition();
-      recognition.lang = "en-IN";
-      recognition.onresult = (event) => {
-        const transcript = event.results[0][0].transcript;
-        document.getElementById("searchInput").value = transcript;
-        runSearch();
-      };
-      recognition.start();
-    }
-
-    function runSearch() {
-      const rawQuery = document.getElementById("searchInput").value.trim();
-      const resultsArea = document.getElementById("results-area");
-      if (!rawQuery) return;
-
-      resultsArea.style.display = "block";
-      resultsArea.innerHTML = "";
-      const q = rawQuery.toLowerCase();
-
-      // 1. Instant Math Evaluator
-const mathExpr = q.replace(/^math:\s*/i, "");
-        if (/^[0-9+\-*/().\s%^]+$/.test(mathExpr) && /[0-9]/.test(mathExpr)) {
-    try {
-      const sanitized = mathExpr.replace(/\^/g, "**");
-      const result = Function('"use strict"; return (' + sanitized + ')')();
-      if (typeof result === "number" && !isNaN(result)) {
-        resultsArea.innerHTML = `
-          <div class="result-card">
-            <h3>🧮 Instant Calculator</h3>
-            <p><strong>${rawQuery.replace(/^math:\s*/i, "")} = ${result}</strong></p>
-          </div>`;
+      if (lower.startsWith('!g ')) {
+        location.href = 'https://' + '://google.com' + encodeURIComponent(raw.slice(3));
         return;
       }
-    } catch (e) {}
-  }
 
-  // 2. Unit Converter (e.g., "10 km to miles")
-  const unitMatch = q.match(/^([\d.]+)\s*(km|miles|mi|kg|lbs|lb|cm|inch|inches|in|c|f)\s+(?:to|in)\s+(km|miles|mi|kg|lbs|lb|cm|inch|inches|in|c|f)$/i);
-  if (unitMatch) {
-    const val = parseFloat(unitMatch[1]);
-    const from = unitMatch[2].toLowerCase();
-    const to = unitMatch[3].toLowerCase();
-    let converted = null;
+      const box = document.getElementById('results');
+      document.getElementById('homeBox').style.padding = '24px 20px';
+      box.innerHTML = '<div class="card">Searching Zenithal...</div>';
 
-    if (from === "km" && (to === "miles" || to === "mi")) converted = (val * 0.621371).toFixed(4) + " miles";
-    else if ((from === "miles" || from === "mi") && to === "km") converted = (val / 0.621371).toFixed(4) + " km";
-    else if (from === "kg" && (to === "lbs" || to === "lb")) converted = (val * 2.20462).toFixed(4) + " lbs";
-    else if ((from === "lbs" || from === "lb") && to === "kg") converted = (val / 2.20462).toFixed(4) + " kg";
-    else if (from === "cm" && (to === "inch" || to === "inches" || to === "in")) converted = (val * 0.393701).toFixed(4) + " inches";
-    else if ((from === "inch" || from === "inches" || from === "in") && to === "cm") converted = (val / 0.393701).toFixed(4) + " cm";
-    else if (from === "c" && to === "f") converted = ((val * 9) / 5 + 32).toFixed(2) + " °F";
-    else if (from === "f" && to === "c") converted = (((val - 32) * 5) / 9).toFixed(2) + " °C";
+      // 1. Math Calculator
+      if (/^[0-9+\-*/().\s]+$/.test(raw)) {
+        try {
+          const ans = Function('"use strict";return (' + raw + ')')();
+          box.innerHTML = '<div class="card"><div class="title">🧮 Zenithal Calculator</div><p style="font-size:22px;font-weight:bold;margin:8px 0 0;">' + raw + ' = ' + ans + '</p></div>';
+          return;
+        } catch (err) {}
+      }
 
-    if (converted) {
-      resultsArea.innerHTML = `
-        <div class="result-card">
-          <h3>⚖️ Unit Converter</h3>
-          <p><strong>${val} ${from} = ${converted}</strong></p>
-        </div>`;
-      return;
-    }
-  }
-
-  // 3. Dictionary Lookup (e.g., "define zenith")
-  if (q.startsWith("define ")) {
-    const word = rawQuery.slice(7).trim();
-    resultsArea.innerHTML = `<div class="result-card"><p>Looking up definition for <strong>${word}</strong>...</p></div>`;
-    fetch(`https://dictionaryapi.dev{encodeURIComponent(word)}`)
-      .then((res) => res.json())
-      .then((data) => {
-        if (Array.isArray(data) && data[0]?.meanings?.[0]) {
-          const meaning = data[0].meanings[0];
-          const def = meaning.definitions[0].definition;
-          resultsArea.innerHTML = `
-            <div class="result-card">
-              <h3>📖 ${data[0].word} (${meaning.partOfSpeech})</h3>
-              <p>${def}</p>
-            </div>`;
-        } else {
-          resultsArea.innerHTML = `<div class="result-card"><p>No definition found for "${word}".</p></div>`;
-        }
-      })
-      .catch(() => {
-        resultsArea.innerHTML = `<div class="result-card"><p>Could not load dictionary right now.</p></div>`;
-      });
-    return;
-  }
-
-  // 4. Weather Lookup (e.g., "weather Kolkata")
-  if (q.startsWith("weather ")) {
-    const city = rawQuery.slice(8).trim();
-    resultsArea.innerHTML = `<div class="result-card"><p>Checking weather in <strong>${city}</strong>...</p></div>`;
-    fetch(`https://open-meteo.com{encodeURIComponent(city)}&count=1`)
-      .then((res) => res.json())
-      .then((geo) => {
-        if (!geo.results || !geo.results.length) {
-          resultsArea.innerHTML = `<div class="result-card"><p>City "${city}" not found.</p></div>`;
+      // 2. Unit Converter (e.g. "10 km to miles")
+      const parts = lower.split(' ');
+      if (parts.length === 4 && (parts.at(2) === 'to' || parts.at(2) === 'in')) {
+        const val = parseFloat(parts.at(0));
+        const from = parts.at(1);
+        const to = parts.at(3);
+        const rates = { km_miles: 0.621371, miles_km: 1.60934, m_cm: 100, cm_m: 0.01, kg_lbs: 2.20462, lbs_kg: 0.453592 };
+        let out = null;
+        if (from === 'c' && to === 'f') out = (val * 9 / 5) + 32;
+        else if (from === 'f' && to === 'c') out = (val - 32) * 5 / 9;
+        else if (rates[from + '_' + to]) out = val * rates[from + '_' + to];
+        if (out !== null && !isNaN(out)) {
+          box.innerHTML = '<div class="card"><div class="title">⚖️ Zenithal Unit Converter</div><p style="font-size:22px;font-weight:bold;margin:8px 0 0;">' + val + ' ' + from.toUpperCase() + ' = ' + out.toFixed(2) + ' ' + to.toUpperCase() + '</p></div>';
           return;
         }
-        const { latitude, longitude, name, country } = geo.results[0];
-        return fetch(`https://open-meteo.com{latitude}&longitude=${longitude}&current_weather=true`)
-          .then((r) => r.json())
-          .then((w) => {
-            const cw = w.current_weather;
-            resultsArea.innerHTML = `
-              <div class="result-card">
-                <h3>☀️ Weather in ${name}, ${country}</h3>
-                <p><strong>Temperature:</strong> ${cw.temperature}°C • <strong>Wind:</strong> ${cw.windspeed} km/h</p>
-              </div>`;
-          });
-      })
-      .catch(() => {
-        resultsArea.innerHTML = `<div class="result-card"><p>Unable to fetch weather right now.</p></div>`;
-      });
-    return;
-  }
+      }
 
-  // 5. Local ZENITHAL_DB (from data.js) + Live Web Results
-  let html = "";
-  if (typeof ZENITHAL_DB !== "undefined" && Array.isArray(ZENITHAL_DB)) {
-    const matches = ZENITHAL_DB.filter((item) =>
-      JSON.stringify(item).toLowerCase().includes(q)
-    );
-    matches.forEach((item) => {
-      const title = item.title || item.keyword || item.question || "Zenithal Knowledge";
-      const desc = item.description || item.answer || item.content || item.summary || "";
-      const url = item.url || item.link || "";
-      html += `
-        <div class="result-card">
-          <h3>${url ? `<a href="${url}" target="_blank">${title}</a>` : title}</h3>
-          <p>${desc}</p>
-        </div>`;
-    });
-  }
+      // 3. Dictionary (e.g. "define zenith")
+      if (lower.startsWith('define ')) {
+        const word = raw.slice(7).trim();
+        try {
+          const dRes = await fetch('https://' + 'api.dictionaryapi.dev/api/v2/entries/en/' + encodeURIComponent(word));
+          if (dRes.ok) {
+            const dData = await dRes.json();
+            const entry = dData.at(0);
+            const meaning = entry.meanings.at(0);
+            const def = meaning.definitions.at(0).definition;
+            box.innerHTML = '<div class="card"><div class="title">📖 Dictionary: ' + entry.word + ' (' + meaning.partOfSpeech + ')</div><p style="margin:8px 0 0;">' + def + '</p></div>';
+            return;
+          }
+        } catch (err) {}
+      }
 
-  resultsArea.innerHTML = html || `<div class="result-card"><p>Searching Zenithal & web for <strong>${rawQuery}</strong>...</p></div>`;
+      // 4. Live Weather (e.g. "weather Kolkata")
+      if (lower.startsWith('weather ')) {
+        const city = raw.slice(8).trim();
+        try {
+          const gRes = await fetch('https://' + '://open-meteo.com' + encodeURIComponent(city));
+          const gData = await gRes.json();
+          const p = gData.results.at(0);
+          if (p) {
+            const wRes = await fetch('https://' + '://open-meteo.com' + p.latitude + '&longitude=' + p.longitude + '&current_weather=true');
+            const wData = await wRes.json();
+            const cur = wData.current_weather;
+            box.innerHTML = '<div class="card"><div class="title">🌤️ Live Weather: ' + p.name + ', ' + p.country + '</div><p style="font-size:22px;font-weight:bold;margin:8px 0 4px;">' + cur.temperature + '°C</p><p style="color:var(--sub);margin:0;">Wind Speed: ' + cur.windspeed + ' km/h</p></div>';
+            return;
+          }
+        } catch (err) {}
+      }
+    // Zenithal Meet Quick-Launch Functions
+    function generateZMeetCode() {
+      const chars = 'abcdefghijklmnopqrstuvwxyz';
+      const part = (len) => Array.from({ length: len }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
+      return `${part(3)}-${part(4)}-${part(3)}`;
+    }
 
-    // 6. Worldwide Image Search (e.g., "image of dogs", "photos of Taj Mahal")
-  const imgMatch = q.match(/^(?:image|images|photo|photos|pic|pics|picture|pictures)\s+(?:of\s+)?(.+)$/i);
-  if (imgMatch) {
-    const subject = imgMatch[1].trim();
-    const googleImgUrl = "https://google.com" + encodeURIComponent(subject);
-    resultsArea.innerHTML = `<div class="result-card"><p>🖼️ Searching worldwide images for <strong>${subject}</strong>...</p></div>`;
-
-    const cbName = "zenImgCb_" + Date.now();
-    window[cbName] = function (data) {
-      delete window[cbName];
-      const pages = data && data.query && data.query.pages ? Object.values(data.query.pages) : [];
-      let imgGrid = `<div class="result-card"><h3>🖼️ Images of "${subject}"</h3><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-top:12px;">`;
-      let count = 0;
-
-      pages.forEach((p) => {
-        if (p.thumbnail && p.thumbnail.source) {
-          count++;
-          const fullUrl = (p.imageinfo && p.imageinfo[0] && p.imageinfo[0].descriptionurl) || p.thumbnail.source;
-          imgGrid += `
-            <a href="${fullUrl}" target="_blank" style="display:block;border-radius:10px;overflow:hidden;border:1px solid var(--border);background:#000;">
-              <img src="${p.thumbnail.source}" alt="${subject}" style="width:100%;height:120px;object-fit:cover;display:block;" />
-            </a>`;
+      // 5. Zenithal Original Database (data.js)
+      let htmlOut = '';
+      if (typeof ZENITHAL_DB !== 'undefined') {
+        const matches = ZENITHAL_DB.filter(function(item) {
+          return item.title.toLowerCase().includes(lower) || item.keywords.some(function(k) { return lower.includes(k) || k.includes(lower); });
+        });
+        for (let i = 0; i < matches.length; i++) {
+          const m = matches.at(i);
+          htmlOut += '<div class="card" style="border-left:4px solid #3b82f6;"><div style="font-size:12px;color:#60a5fa;font-weight:bold;">⭐ ZENITHAL ORIGINAL • ' + m.category.toUpperCase() + '</div><div class="title" style="margin-top:4px;">' + m.title + '</div><p style="margin:8px 0 6px;">' + m.summary + '</p><p style="color:var(--sub);font-size:14px;margin:0;">' + m.example + '</p></div>';
         }
-      });
+      }
+    function launchInstantZMeet() {
+      const roomCode = generateZMeetCode();
+      window.location.href = `meet.html?room=${roomCode}`;
+    }
 
-      imgGrid += `</div>
-        <p style="margin-top:12px;">
-          <a href="${googleImgUrl}" target="_blank">View more "${subject}" images on Google Images →</a>
-        </p>
-      </div>`;
-
-      resultsArea.innerHTML = count > 0
-        ? imgGrid
-        : `<div class="result-card"><h3>🖼️ Image Search: ${subject}</h3><p><a href="${googleImgUrl}" target="_blank">Open worldwide images for "${subject}" →</a></p></div>`;
-    };
-
-    const script = document.createElement("script");
-    script.src = "https://wikimedia.org+" + encodeURIComponent(subject) + "&gsrnamespace=6&gsrlimit=8&prop=pageimages|imageinfo&iiprop=url&pithumbsize=300&format=json&callback=" + cbName;
-    script.onerror = () => {
-      resultsArea.innerHTML = `<div class="result-card"><h3>🖼️ Image Search</h3><p><a href="${googleImgUrl}" target="_blank">Search worldwide images for "${subject}" →</a></p></div>`;
-    };
-    document.body.appendChild(script);
-    return;
-  }
-
-  // 7. Worldwide Web & Encyclopedia Search (CORS-Free JSONP)
-  const encQ = encodeURIComponent(rawQuery);
-  const googleUrl = "https://google.com" + encQ;
-  const bingUrl = "https://bing.com" + encQ;
-  const ddgUrl = "https://duckduckgo.com" + encQ;
-
-  resultsArea.innerHTML = html || `<div class="result-card"><p>🌐 Searching worldwide for <strong>${rawQuery}</strong>...</p></div>`;
-
-  const wikiCb = "zenWikiCb_" + Date.now();
-  window[wikiCb] = function (data) {
-    delete window[wikiCb];
-    const wikiResults = data && data.query && data.query.search ? data.query.search : [];
-    let wikiHtml = html;
-
-    wikiResults.slice(0, 6).forEach((item) => {
-      const pageUrl = "https://wikipedia.org" + encodeURIComponent(item.title.replace(/ /g, "_"));
-      wikiHtml += `
-        <div class="result-card">
-          <h3><a href="${pageUrl}" target="_blank">${item.title}</a></h3>
-          <p>${item.snippet}...</p>
-        </div>`;
-    });
-
-    wikiHtml += `
-      <div class="result-card">
-        <h3>🌐 Worldwide Web Results</h3>
-        <p>Explore more results across the web: 
-          <a href="${googleUrl}" target="_blank">Google</a> • 
-          <a href="${bingUrl}" target="_blank">Bing</a> • 
-          <a href="${ddgUrl}" target="_blank">DuckDuckGo</a>
-        </p>
-      </div>`;
-
-    resultsArea.innerHTML = wikiHtml;
-  };
-
-  const wikiScript = document.createElement("script");
-  wikiScript.src = "https://wikipedia.org" + encQ + "&format=json&callback=" + wikiCb;
-  wikiScript.onerror = () => {
-    resultsArea.innerHTML = html + `
-      <div class="result-card">
-        <h3>🌐 Worldwide Web Search</h3>
-        <p><a href="${googleUrl}" target="_blank">Search "${rawQuery}" across the worldwide web →</a></p>
-      </div>`;
-  };
-  document.body.appendChild(wikiScript);
-}
-</script>
+      // 6. Live Wikipedia Search
+      const apiUrl = 'https://' + 'en.wikipedia.org/w/api.php?action=query&list=search&format=json&origin=*&srsearch=' + encodeURIComponent(raw);
+      const res = await fetch(apiUrl);
+      const data = await res.json();
+      const items = (data.query && data.query.search) || [];
+      if (!items.length && !htmlOut) {
+        box.innerHTML = '<div class="card">No instant results found for "' + raw + '".</div>';
+    function joinExistingZMeet() {
+      const input = document.getElementById('zmeet-room-input').value.trim();
+      if (!input) {
+        alert('Please enter a meeting code or link!');
+        return;
+      }
+      for (let i = 0; i < items.length; i++) {
+        const item = items.at(i);
+        const wUrl = 'https://' + 'en.wikipedia.org/wiki/' + encodeURIComponent(item.title);
+        htmlOut += '<div class="card"><a class="title" href="' + wUrl + '" target="_blank">' + item.title + '</a><p style="color:var(--sub);margin:6px 0 0;">' + item.snippet + '...</p></div>';
+      }
+      box.innerHTML = htmlOut;
+      const roomCode = input.includes('room=') ? input.split('room=')[1].split('&')[0] : input;
+      window.location.href = `meet.html?room=${encodeURIComponent(roomCode)}`;
+    }
+    const urlQuery = new URLSearchParams(window.location.search).get('q');
+    if (urlQuery) {
+      document.getElementById('q').value = urlQuery;
+      runSearch();
+    }
+  </script>
 </body>
 </html>
 
-      
+    
+    function getZenithalMeetWidget(query) {
+      const q = query.toLowerCase().trim();
+      const triggers = ['meet', 'zenithal meet', 'video call', 'start meeting', 'join meeting', 'vmeet'];
+      const isTriggered = triggers.some(word => q === word || q.includes('zenithal meet') || q.includes('video call'));
+      if (!isTriggered) return '';
+
+      return `
+        <div class="zmeet-card">
+          <span class="zmeet-badge">ZENITHAL ECOSYSTEM</span>
+          <h3>📹 Zenithal Meet</h3>
+          <p>Fast, secure video meetings directly in your browser. Start an instant room or join with a code.</p>
+          <div class="zmeet-actions">
+            <button type="button" class="zmeet-btn-primary" onclick="launchInstantZMeet()">+ New Meeting</button>
+            <div class="zmeet-join-group">
