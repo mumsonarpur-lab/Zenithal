@@ -392,4 +392,147 @@
       const q = rawQuery.toLowerCase();
 
       // 1. Instant Math Evaluator
-      const mathExpr = q.replace(/^math:\s*/i, "");
+const mathExpr = q.replace(/^math:\s*/i, "");
+        if (/^[0-9+\-*/().\s%^]+$/.test(mathExpr) && /[0-9]/.test(mathExpr)) {
+    try {
+      const sanitized = mathExpr.replace(/\^/g, "**");
+      const result = Function('"use strict"; return (' + sanitized + ')')();
+      if (typeof result === "number" && !isNaN(result)) {
+        resultsArea.innerHTML = `
+          <div class="result-card">
+            <h3>🧮 Instant Calculator</h3>
+            <p><strong>${rawQuery.replace(/^math:\s*/i, "")} = ${result}</strong></p>
+          </div>`;
+        return;
+      }
+    } catch (e) {}
+  }
+
+  // 2. Unit Converter (e.g., "10 km to miles")
+  const unitMatch = q.match(/^([\d.]+)\s*(km|miles|mi|kg|lbs|lb|cm|inch|inches|in|c|f)\s+(?:to|in)\s+(km|miles|mi|kg|lbs|lb|cm|inch|inches|in|c|f)$/i);
+  if (unitMatch) {
+    const val = parseFloat(unitMatch[1]);
+    const from = unitMatch[2].toLowerCase();
+    const to = unitMatch[3].toLowerCase();
+    let converted = null;
+
+    if (from === "km" && (to === "miles" || to === "mi")) converted = (val * 0.621371).toFixed(4) + " miles";
+    else if ((from === "miles" || from === "mi") && to === "km") converted = (val / 0.621371).toFixed(4) + " km";
+    else if (from === "kg" && (to === "lbs" || to === "lb")) converted = (val * 2.20462).toFixed(4) + " lbs";
+    else if ((from === "lbs" || from === "lb") && to === "kg") converted = (val / 2.20462).toFixed(4) + " kg";
+    else if (from === "cm" && (to === "inch" || to === "inches" || to === "in")) converted = (val * 0.393701).toFixed(4) + " inches";
+    else if ((from === "inch" || from === "inches" || from === "in") && to === "cm") converted = (val / 0.393701).toFixed(4) + " cm";
+    else if (from === "c" && to === "f") converted = ((val * 9) / 5 + 32).toFixed(2) + " °F";
+    else if (from === "f" && to === "c") converted = (((val - 32) * 5) / 9).toFixed(2) + " °C";
+
+    if (converted) {
+      resultsArea.innerHTML = `
+        <div class="result-card">
+          <h3>⚖️ Unit Converter</h3>
+          <p><strong>${val} ${from} = ${converted}</strong></p>
+        </div>`;
+      return;
+    }
+  }
+
+  // 3. Dictionary Lookup (e.g., "define zenith")
+  if (q.startsWith("define ")) {
+    const word = rawQuery.slice(7).trim();
+    resultsArea.innerHTML = `<div class="result-card"><p>Looking up definition for <strong>${word}</strong>...</p></div>`;
+    fetch(`https://dictionaryapi.dev{encodeURIComponent(word)}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data) && data[0]?.meanings?.[0]) {
+          const meaning = data[0].meanings[0];
+          const def = meaning.definitions[0].definition;
+          resultsArea.innerHTML = `
+            <div class="result-card">
+              <h3>📖 ${data[0].word} (${meaning.partOfSpeech})</h3>
+              <p>${def}</p>
+            </div>`;
+        } else {
+          resultsArea.innerHTML = `<div class="result-card"><p>No definition found for "${word}".</p></div>`;
+        }
+      })
+      .catch(() => {
+        resultsArea.innerHTML = `<div class="result-card"><p>Could not load dictionary right now.</p></div>`;
+      });
+    return;
+  }
+
+  // 4. Weather Lookup (e.g., "weather Kolkata")
+  if (q.startsWith("weather ")) {
+    const city = rawQuery.slice(8).trim();
+    resultsArea.innerHTML = `<div class="result-card"><p>Checking weather in <strong>${city}</strong>...</p></div>`;
+    fetch(`https://open-meteo.com{encodeURIComponent(city)}&count=1`)
+      .then((res) => res.json())
+      .then((geo) => {
+        if (!geo.results || !geo.results.length) {
+          resultsArea.innerHTML = `<div class="result-card"><p>City "${city}" not found.</p></div>`;
+          return;
+        }
+        const { latitude, longitude, name, country } = geo.results[0];
+        return fetch(`https://open-meteo.com{latitude}&longitude=${longitude}&current_weather=true`)
+          .then((r) => r.json())
+          .then((w) => {
+            const cw = w.current_weather;
+            resultsArea.innerHTML = `
+              <div class="result-card">
+                <h3>☀️ Weather in ${name}, ${country}</h3>
+                <p><strong>Temperature:</strong> ${cw.temperature}°C • <strong>Wind:</strong> ${cw.windspeed} km/h</p>
+              </div>`;
+          });
+      })
+      .catch(() => {
+        resultsArea.innerHTML = `<div class="result-card"><p>Unable to fetch weather right now.</p></div>`;
+      });
+    return;
+  }
+
+  // 5. Local ZENITHAL_DB (from data.js) + Live Web Results
+  let html = "";
+  if (typeof ZENITHAL_DB !== "undefined" && Array.isArray(ZENITHAL_DB)) {
+    const matches = ZENITHAL_DB.filter((item) =>
+      JSON.stringify(item).toLowerCase().includes(q)
+    );
+    matches.forEach((item) => {
+      const title = item.title || item.keyword || item.question || "Zenithal Knowledge";
+      const desc = item.description || item.answer || item.content || item.summary || "";
+      const url = item.url || item.link || "";
+      html += `
+        <div class="result-card">
+          <h3>${url ? `<a href="${url}" target="_blank">${title}</a>` : title}</h3>
+          <p>${desc}</p>
+        </div>`;
+    });
+  }
+
+  resultsArea.innerHTML = html || `<div class="result-card"><p>Searching Zenithal & web for <strong>${rawQuery}</strong>...</p></div>`;
+
+  // 6. Wikipedia Live Search Fallback
+  fetch(`https://wikipedia.org{encodeURIComponent(rawQuery)}&format=json&origin=*`)
+    .then((res) => res.json())
+    .then((data) => {
+      const wikiResults = data?.query?.search || [];
+      let wikiHtml = html;
+      wikiResults.slice(0, 5).forEach((item) => {
+        const pageUrl = `https://wikipedia.org{encodeURIComponent(item.title.replace(/ /g, "_"))}`;
+        wikiHtml += `
+          <div class="result-card">
+            <h3><a href="${pageUrl}" target="_blank">${item.title}</a></h3>
+            <p>${item.snippet}...</p>
+          </div>`;
+      });
+      resultsArea.innerHTML = wikiHtml || `<div class="result-card"><p>No results found for "${rawQuery}".</p></div>`;
+    })
+    .catch(() => {
+      if (!html) {
+        resultsArea.innerHTML = `<div class="result-card"><p>Search completed, but external web results could not load.</p></div>`;
+      }
+    });
+}
+</script>
+</body>
+</html>
+
+      
