@@ -509,27 +509,97 @@ const mathExpr = q.replace(/^math:\s*/i, "");
 
   resultsArea.innerHTML = html || `<div class="result-card"><p>Searching Zenithal & web for <strong>${rawQuery}</strong>...</p></div>`;
 
-  // 6. Wikipedia Live Search Fallback
-  fetch(`https://wikipedia.org{encodeURIComponent(rawQuery)}&format=json&origin=*`)
-    .then((res) => res.json())
-    .then((data) => {
-      const wikiResults = data?.query?.search || [];
-      let wikiHtml = html;
-      wikiResults.slice(0, 5).forEach((item) => {
-        const pageUrl = `https://wikipedia.org{encodeURIComponent(item.title.replace(/ /g, "_"))}`;
-        wikiHtml += `
-          <div class="result-card">
-            <h3><a href="${pageUrl}" target="_blank">${item.title}</a></h3>
-            <p>${item.snippet}...</p>
-          </div>`;
+    // 6. Worldwide Image Search (e.g., "image of dogs", "photos of Taj Mahal")
+  const imgMatch = q.match(/^(?:image|images|photo|photos|pic|pics|picture|pictures)\s+(?:of\s+)?(.+)$/i);
+  if (imgMatch) {
+    const subject = imgMatch[1].trim();
+    const googleImgUrl = "https://google.com" + encodeURIComponent(subject);
+    resultsArea.innerHTML = `<div class="result-card"><p>🖼️ Searching worldwide images for <strong>${subject}</strong>...</p></div>`;
+
+    const cbName = "zenImgCb_" + Date.now();
+    window[cbName] = function (data) {
+      delete window[cbName];
+      const pages = data && data.query && data.query.pages ? Object.values(data.query.pages) : [];
+      let imgGrid = `<div class="result-card"><h3>🖼️ Images of "${subject}"</h3><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-top:12px;">`;
+      let count = 0;
+
+      pages.forEach((p) => {
+        if (p.thumbnail && p.thumbnail.source) {
+          count++;
+          const fullUrl = (p.imageinfo && p.imageinfo[0] && p.imageinfo[0].descriptionurl) || p.thumbnail.source;
+          imgGrid += `
+            <a href="${fullUrl}" target="_blank" style="display:block;border-radius:10px;overflow:hidden;border:1px solid var(--border);background:#000;">
+              <img src="${p.thumbnail.source}" alt="${subject}" style="width:100%;height:120px;object-fit:cover;display:block;" />
+            </a>`;
+        }
       });
-      resultsArea.innerHTML = wikiHtml || `<div class="result-card"><p>No results found for "${rawQuery}".</p></div>`;
-    })
-    .catch(() => {
-      if (!html) {
-        resultsArea.innerHTML = `<div class="result-card"><p>Search completed, but external web results could not load.</p></div>`;
-      }
+
+      imgGrid += `</div>
+        <p style="margin-top:12px;">
+          <a href="${googleImgUrl}" target="_blank">View more "${subject}" images on Google Images →</a>
+        </p>
+      </div>`;
+
+      resultsArea.innerHTML = count > 0
+        ? imgGrid
+        : `<div class="result-card"><h3>🖼️ Image Search: ${subject}</h3><p><a href="${googleImgUrl}" target="_blank">Open worldwide images for "${subject}" →</a></p></div>`;
+    };
+
+    const script = document.createElement("script");
+    script.src = "https://wikimedia.org+" + encodeURIComponent(subject) + "&gsrnamespace=6&gsrlimit=8&prop=pageimages|imageinfo&iiprop=url&pithumbsize=300&format=json&callback=" + cbName;
+    script.onerror = () => {
+      resultsArea.innerHTML = `<div class="result-card"><h3>🖼️ Image Search</h3><p><a href="${googleImgUrl}" target="_blank">Search worldwide images for "${subject}" →</a></p></div>`;
+    };
+    document.body.appendChild(script);
+    return;
+  }
+
+  // 7. Worldwide Web & Encyclopedia Search (CORS-Free JSONP)
+  const encQ = encodeURIComponent(rawQuery);
+  const googleUrl = "https://google.com" + encQ;
+  const bingUrl = "https://bing.com" + encQ;
+  const ddgUrl = "https://duckduckgo.com" + encQ;
+
+  resultsArea.innerHTML = html || `<div class="result-card"><p>🌐 Searching worldwide for <strong>${rawQuery}</strong>...</p></div>`;
+
+  const wikiCb = "zenWikiCb_" + Date.now();
+  window[wikiCb] = function (data) {
+    delete window[wikiCb];
+    const wikiResults = data && data.query && data.query.search ? data.query.search : [];
+    let wikiHtml = html;
+
+    wikiResults.slice(0, 6).forEach((item) => {
+      const pageUrl = "https://wikipedia.org" + encodeURIComponent(item.title.replace(/ /g, "_"));
+      wikiHtml += `
+        <div class="result-card">
+          <h3><a href="${pageUrl}" target="_blank">${item.title}</a></h3>
+          <p>${item.snippet}...</p>
+        </div>`;
     });
+
+    wikiHtml += `
+      <div class="result-card">
+        <h3>🌐 Worldwide Web Results</h3>
+        <p>Explore more results across the web: 
+          <a href="${googleUrl}" target="_blank">Google</a> • 
+          <a href="${bingUrl}" target="_blank">Bing</a> • 
+          <a href="${ddgUrl}" target="_blank">DuckDuckGo</a>
+        </p>
+      </div>`;
+
+    resultsArea.innerHTML = wikiHtml;
+  };
+
+  const wikiScript = document.createElement("script");
+  wikiScript.src = "https://wikipedia.org" + encQ + "&format=json&callback=" + wikiCb;
+  wikiScript.onerror = () => {
+    resultsArea.innerHTML = html + `
+      <div class="result-card">
+        <h3>🌐 Worldwide Web Search</h3>
+        <p><a href="${googleUrl}" target="_blank">Search "${rawQuery}" across the worldwide web →</a></p>
+      </div>`;
+  };
+  document.body.appendChild(wikiScript);
 }
 </script>
 </body>
