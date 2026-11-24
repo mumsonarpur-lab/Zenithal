@@ -1,206 +1,395 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Zenithal — Official Web Search Engine</title>
-  <meta name="description" content="Zenithal is a fast, clean, and modern web search engine built by Abhinit Pandey with instant math, dictionary, weather, unit converter, and voice search." />
-  <link rel="canonical" href="https://vercel.app" />
-  <meta property="og:site_name" content="Zenithal" />
-  <meta property="og:title" content="Zenithal — Official Web Search Engine" />
-  <meta property="og:description" content="Zenithal is a fast, clean, and modern web search engine built by Abhinit Pandey." />
-  <meta property="og:url" content="https://vercel.app" />
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    "name": "Zenithal",
-    "alternateName": ["Zenithal Search", "Zenithal Search Engine"],
-    "url": "https://vercel.app"
-  }
-  </script>
-  <link rel="manifest" href="/manifest.json">
-  <style>
-    :root[data-theme="dark"] { --bg: #0f172a; --card: #1e293b; --text: #f1f5f9; --sub: #94a3b8; --accent: #3b82f6; --border: #334155; }
-    :root[data-theme="light"] { --bg: #f8fafc; --card: #ffffff; --text: #0f172a; --sub: #475569; --accent: #2563eb; --border: #cbd5e1; }
-    * { box-sizing: border-box; }
-    body { margin: 0; font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
-    .topbar { display: flex; justify-content: flex-end; align-items: center; gap: 10px; padding: 14px 20px; }
-    .badge { background: rgba(16, 185, 129, 0.15); color: #34d399; padding: 5px 12px; border-radius: 99px; font-size: 12px; font-weight: 600; }
-    .btn-sm { background: var(--card); color: var(--text); border: 1px solid var(--border); padding: 6px 14px; border-radius: 8px; cursor: pointer; font-size: 13px; }
-    .home { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; text-align: center; }
-    .logo { font-size: 56px; font-weight: 800; color: var(--accent); letter-spacing: -1px; cursor: pointer; }
-    .box { width: 100%; max-width: 580px; padding: 14px 20px; border-radius: 99px; border: 1px solid var(--border); background: var(--card); color: var(--text); font-size: 16px; outline: none; }
-    .box:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25); }
-    .btn { background: var(--accent); color: #fff; border: none; padding: 11px 22px; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer; }
-    .btn:hover { opacity: 0.92; }
-    .chip { padding: 6px 12px; border-radius: 99px; border: 1px solid var(--border); background: var(--card); color: var(--text); cursor: pointer; font-size: 13px; }
-    .chip:hover { border-color: var(--accent); }
-    .main { width: 100%; max-width: 720px; margin: 0 auto; padding: 0 20px 30px; }
-    .card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 18px 20px; margin-bottom: 14px; text-align: left; }
-    .title { font-size: 18px; font-weight: 700; color: #60a5fa; text-decoration: none; }
-    footer { text-align: center; padding: 20px 16px; color: var(--sub); font-size: 14px; border-top: 1px solid rgba(148, 163, 184, 0.15); margin-top: auto; }
-    footer a { color: var(--sub); margin: 0 10px; text-decoration: none; }
-    footer a:hover { color: var(--accent); }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Zenithal — Enterprise Global Discovery & Intelligence</title>
+  <meta name="description" content="Zenithal is an original web search and student discovery engine created by 12-year-old developer Abhinit Pandey in West Bengal, India." />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="image.png" />
 
-    /* Zenithal Meet Quick-Launch Card */
-    .zmeet-card {
-      background: linear-gradient(135deg, #1d4ed8 0%, #1e3a8a 100%);
-      color: #ffffff;
-      border-radius: 14px;
-      padding: 20px;
-      margin-bottom: 16px;
-      box-shadow: 0 6px 18px rgba(37, 99, 235, 0.25);
-      text-align: left;
+  <!-- Google AdSense: Replace ca-pub-XXXXXXXXXXXXXXXX with your actual AdSense Publisher ID -->
+  <script async src="https://googlesyndication.com"
+     crossorigin="anonymous"></script>
+
+  <style>
+    :root {
+      --bg: #070b14;
+      --card: #0d1424;
+      --input-bg: #11192c;
+      --border: #1e2d4a;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --accent: #38bdf8;
+      --btn: #1d4ed8;
+      --btn-hover: #2563eb;
+      --chip-bg: #161f33;
     }
-    .zmeet-badge {
-      display: inline-block;
-      background: rgba(255, 255, 255, 0.2);
-      padding: 3px 10px;
-      border-radius: 99px;
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.5px;
+
+    body.light {
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --input-bg: #ffffff;
+      --border: #cbd5e1;
+      --text: #0f172a;
+      --muted: #475569;
+      --accent: #0284c7;
+      --btn: #1d4ed8;
+      --btn-hover: #1e40af;
+      --chip-bg: #e2e8f0;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 16px;
+      transition: background 0.25s, color 0.25s;
+    }
+
+    /* Top Bar */
+    .top-bar {
+      width: 100%;
+      max-width: 760px;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 42px;
+    }
+
+    .version-badge {
+      background: rgba(16, 185, 129, 0.14);
+      color: #34d399;
+      border: 1px solid rgba(52, 211, 153, 0.35);
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 600;
+    }
+
+    .theme-btn {
+      background: var(--chip-bg);
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 6px 16px;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    /* Hero Section */
+    .main-container {
+      width: 100%;
+      max-width: 640px;
+      text-align: center;
+      flex: 1;
+    }
+
+    .logo {
+      font-size: 3.1rem;
+      font-weight: 800;
+      color: #38bdf8;
+      letter-spacing: -1px;
       margin-bottom: 8px;
     }
-    .zmeet-card h3 { margin: 0; font-size: 20px; }
-    .zmeet-card p { margin: 6px 0 16px; font-size: 14px; opacity: 0.9; }
-    .zmeet-actions { display: flex; flex-wrap: wrap; gap: 10px; }
-    .zmeet-btn-primary {
-      background: #ffffff;
-      color: #1d4ed8;
-      border: none;
-      padding: 10px 18px;
-      border-radius: 8px;
-      font-weight: 700;
-      font-size: 14px;
-      cursor: pointer;
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 1rem;
+      margin-bottom: 28px;
     }
-    .zmeet-join-group { display: flex; gap: 6px; flex: 1; min-width: 220px; }
-    .zmeet-input {
-      flex: 1;
-      padding: 10px 12px;
-      border-radius: 8px;
-      border: 1px solid rgba(255, 255, 255, 0.4);
-      background: rgba(255, 255, 255, 0.15);
-      color: #ffffff;
-      font-size: 14px;
+
+    /* Search Box */
+    .search-box {
+      width: 100%;
+      background: var(--input-bg);
+      border: 1.5px solid var(--border);
+      border-radius: 999px;
+      padding: 14px 22px;
+      font-size: 1.05rem;
+      color: var(--text);
       outline: none;
+      margin-bottom: 18px;
+      transition: border-color 0.2s;
     }
-    .zmeet-input::placeholder { color: rgba(255, 255, 255, 0.75); }
-    .zmeet-btn-secondary {
-      background: rgba(255, 255, 255, 0.22);
+
+    .search-box:focus {
+      border-color: #38bdf8;
+    }
+
+    .action-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 22px;
+    }
+
+    .btn-primary {
+      background: var(--btn);
       color: #ffffff;
-      border: 1px solid rgba(255, 255, 255, 0.4);
-      padding: 10px 16px;
-      border-radius: 8px;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 12px;
+      font-size: 0.98rem;
       font-weight: 600;
-      font-size: 14px;
       cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-primary:hover {
+      background: var(--btn-hover);
+    }
+
+    /* Quick Chips */
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 30px;
+    }
+
+    .chip {
+      background: var(--chip-bg);
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 8px 16px;
+      border-radius: 999px;
+      font-size: 0.88rem;
+      cursor: pointer;
+      transition: transform 0.15s, border-color 0.2s;
+    }
+
+    .chip:hover {
+      border-color: #38bdf8;
+      transform: translateY(-1px);
+    }
+
+    /* Results Area */
+    #results-area {
+      text-align: left;
+      margin-bottom: 24px;
+      display: none;
+    }
+
+    .result-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px 20px;
+      margin-bottom: 12px;
+    }
+
+    .result-card h3 {
+      color: #38bdf8;
+      margin-bottom: 6px;
+      font-size: 1.05rem;
+    }
+
+    .result-card a {
+      color: #38bdf8;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .result-card p {
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.5;
+    }
+
+    /* AdSense Slot */
+    .ad-container {
+      width: 100%;
+      margin: 18px 0;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    /* About Card */
+    .about-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-left: 4px solid #2563eb;
+      border-radius: 16px;
+      padding: 20px 22px;
+      text-align: left;
+      margin-top: 10px;
+    }
+
+    .about-tag {
+      color: #38bdf8;
+      font-size: 0.74rem;
+      font-weight: 700;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .about-card h2 {
+      font-size: 1.15rem;
+      margin-bottom: 10px;
+      color: var(--text);
+    }
+
+    .about-card p {
+      font-size: 0.93rem;
+      line-height: 1.55;
+      color: var(--text);
+      margin-bottom: 10px;
+    }
+
+    .about-card .mission {
+      color: var(--muted);
+      font-size: 0.88rem;
+      margin-bottom: 0;
+    }
+
+    /* Footer */
+    footer {
+      width: 100%;
+      max-width: 640px;
+      text-align: center;
+      padding: 28px 0 12px;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    .footer-links {
+      margin-bottom: 8px;
+    }
+
+    .footer-links a {
+      color: var(--muted);
+      text-decoration: none;
+      margin: 0 8px;
+    }
+
+    .footer-links a:hover {
+      color: #38bdf8;
     }
   </style>
 </head>
 <body>
-  <div class="topbar">
-    <span class="badge">Zenithal Enterprise v7.0</span>
-    <a href="meet.html" class="btn-sm" style="text-decoration: none;">📹 Zenithal Meet</a>
-    <button class="btn-sm" onclick="toggleTheme()">Theme</button>
+
+  <div class="top-bar">
+    <span class="version-badge">Zenithal Enterprise v6.0</span>
+    <button class="theme-btn" onclick="toggleTheme()">Theme</button>
   </div>
 
-  <div class="home" id="homeBox">
-    <div class="logo" onclick="location.href='/'">Zenithal</div>
-    <p style="color:var(--sub);margin:8px 0 24px;">Enterprise Global Discovery &amp; Intelligence</p>
-    <form id="searchForm" style="width:100%;display:flex;flex-direction:column;align-items:center;">
-      <input type="text" id="q" class="box" placeholder="Try: zenithal meet, 25 * 16, define zenith, weather Kolkata, 10 km to miles..." autofocus required>
-      <div style="display:flex;gap:10px;margin-top:16px;">
-        <button type="submit" class="btn">Search Zenithal</button>
-        <button type="button" class="btn" id="micBtn" onclick="startVoice()">🎤 Voice</button>
-      </div>
-    </form>
-    <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:18px;max-width:650px;">
-      <button type="button" class="chip" onclick="quickSearch('zenithal meet')">📹 Zenithal Meet</button>
-      <button type="button" class="chip" onclick="quickSearch('25 * 16')">🧮 Math: 25 * 16</button>
-      <button type="button" class="chip" onclick="quickSearch('define zenith')">📖 define zenith</button>
-      <button type="button" class="chip" onclick="quickSearch('weather Kolkata')">🌤️ weather Kolkata</button>
-      <button type="button" class="chip" onclick="quickSearch('10 km to miles')">⚖️ 10 km to miles</button>
-      <button type="button" class="chip" onclick="quickSearch('newton')">🔬 Newton's Laws</button>
+  <main class="main-container">
+    <h1 class="logo">Zenithal</h1>
+    <p class="subtitle">Enterprise Global Discovery &amp; Intelligence</p>
+
+    <input
+      type="text"
+      id="searchInput"
+      class="search-box"
+      placeholder="Search Zenithal or ask anything..."
+      onkeydown="if(event.key==='Enter') runSearch()"
+    />
+
+    <div class="action-buttons">
+      <button class="btn-primary" onclick="runSearch()">Search Zenithal</button>
+      <button class="btn-primary" onclick="startVoiceSearch()">🎤 Voice</button>
     </div>
-  </div>
 
-  <div class="main" id="results"></div>
+    <div class="chips">
+      <button class="chip" onclick="quickSearch('Math: 25 * 16')">🧮 Math: 25 * 16</button>
+      <button class="chip" onclick="quickSearch('define zenith')">📖 define zenith</button>
+      <button class="chip" onclick="quickSearch('weather Kolkata')">☀️ weather Kolkata</button>
+      <button class="chip" onclick="quickSearch('10 km to miles')">⚖️ 10 km to miles</button>
+      <button class="chip" onclick="quickSearch(&quot;Newton's Laws&quot;)">🔬 Newton's Laws</button>
+    </div>
+
+    <!-- Instant & Web Results -->
+    <div id="results-area"></div>
+
+    <!-- Google AdSense Display Unit -->
+    <div class="ad-container">
+      <ins class="adsbygoogle"
+           style="display:block"
+           data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+           data-ad-slot="1234567890"
+           data-ad-format="auto"
+           data-full-width-responsive="true"></ins>
+      <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+    </div>
+
+    <!-- About Zenithal Card -->
+    <section class="about-card">
+      <div class="about-tag">★ ZENITHAL ORIGINAL • ZENITHAL OFFICIAL</div>
+      <h2>About Zenithal Search Engine</h2>
+      <p>
+        Zenithal is an original web search and student discovery engine created by 12-year-old developer Abhinit Pandey in West Bengal, India.
+      </p>
+      <p class="mission">
+        Mission: Fast, clean, distraction-free answers for students and curious minds worldwide.
+      </p>
+    </section>
+  </main>
 
   <footer>
-    <div style="margin-bottom:8px;">
-      <a href="/about.html">About</a> •
-      <a href="/privacy.html">Privacy Policy</a> •
-      <a href="/terms.html">Terms</a> •
-      <a href="/contact.html">Contact</a>
+    <div class="footer-links">
+      <a href="about.html">About</a> •
+      <a href="privacy.html">Privacy Policy</a> •
+      <a href="terms.html">Terms</a> •
+      <a href="contact.html">Contact</a>
     </div>
     <div>© 2026 Zenithal Search Engine • Built by Abhinit Pandey</div>
   </footer>
 
-  <script src="/data.js"></script>
-  <script>
-    document.documentElement.setAttribute('data-theme', localStorage.getItem('zenithal_theme') || 'dark');
+  <!-- Load your local search index if present -->
+  <script src="data.js"></script>
 
+  <script>
     function toggleTheme() {
-      const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-      document.documentElement.setAttribute('data-theme', next);
-      localStorage.setItem('zenithal_theme', next);
+      document.body.classList.toggle("light");
     }
 
-    function quickSearch(text) {
-      document.getElementById('q').value = text;
+    function quickSearch(query) {
+      document.getElementById("searchInput").value = query;
       runSearch();
     }
 
-    function startVoice() {
-      const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-      if (!SR) {
-        alert('Voice search works in Chrome and Edge.');
+    function startVoiceSearch() {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRecognition) {
+        alert("Voice search is not supported in this browser.");
         return;
       }
-      const rec = new SR();
-      rec.onresult = function(e) {
-        document.getElementById('q').value = e.results.item(0).item(0).transcript;
+      const recognition = new SpeechRecognition();
+      recognition.lang = "en-IN";
+      recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        document.getElementById("searchInput").value = transcript;
         runSearch();
       };
-      rec.start();
+      recognition.start();
     }
 
-    // Zenithal Meet Quick-Launch Functions
-    function generateZMeetCode() {
-      const chars = 'abcdefghijklmnopqrstuvwxyz';
-      const part = (len) => Array.from({ length: len }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
-      return `${part(3)}-${part(4)}-${part(3)}`;
-    }
+    function runSearch() {
+      const rawQuery = document.getElementById("searchInput").value.trim();
+      const resultsArea = document.getElementById("results-area");
+      if (!rawQuery) return;
 
-    function launchInstantZMeet() {
-      const roomCode = generateZMeetCode();
-      window.location.href = `meet.html?room=${roomCode}`;
-    }
+      resultsArea.style.display = "block";
+      resultsArea.innerHTML = "";
+      const q = rawQuery.toLowerCase();
 
-    function joinExistingZMeet() {
-      const input = document.getElementById('zmeet-room-input').value.trim();
-      if (!input) {
-        alert('Please enter a meeting code or link!');
-        return;
-      }
-      const roomCode = input.includes('room=') ? input.split('room=')[1].split('&')[0] : input;
-      window.location.href = `meet.html?room=${encodeURIComponent(roomCode)}`;
-    }
-
-    function getZenithalMeetWidget(query) {
-      const q = query.toLowerCase().trim();
-      const triggers = ['meet', 'zenithal meet', 'video call', 'start meeting', 'join meeting', 'vmeet'];
-      const isTriggered = triggers.some(word => q === word || q.includes('zenithal meet') || q.includes('video call'));
-      if (!isTriggered) return '';
-
-      return `
-        <div class="zmeet-card">
-          <span class="zmeet-badge">ZENITHAL ECOSYSTEM</span>
-          <h3>📹 Zenithal Meet</h3>
-          <p>Fast, secure video meetings directly in your browser. Start an instant room or join with a code.</p>
-          <div class="zmeet-actions">
-            <button type="button" class="zmeet-btn-primary" onclick="launchInstantZMeet()">+ New Meeting</button>
-            <div class="zmeet-join-group">
+      // 1. Instant Math Evaluator
+      const mathExpr = q.replace(/^math:\s*/i, "");
