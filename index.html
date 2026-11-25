@@ -85,26 +85,7 @@
   </footer>
   <script src="/data.js"></script>
   <script>
-    document.documentElement.setAttribute('data-theme', localStorage.getItem('zenithal_theme') || 'black');
-
-    function toggleTheme() {
-      const next = document.documentElement.getAttribute('data-theme') === 'black' ? 'white' : 'black';
-      document.documentElement.setAttribute('data-theme', next);
-      localStorage.setItem('zenithal_theme', next);
-    }
-
-    function quickSearch(text) {
-      document.getElementById('q').value = text;
-      runSearch();
-    }
-
-    function startVoice() {
-      const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-      if (!SR) {
-        alert('Voice search works in Chrome and Edge.');
-        return;
-      }
-    const rec = new SR();
+    
 rec.onresult = function(e) {
 // Theme initialization and toggle functions
 document.documentElement.setAttribute('data-theme', localStorage.getItem('zenithal_theme') || 'dark');
@@ -165,6 +146,10 @@ async function runSearch() {
       // 2. Unit Converter (e.g. "10 km to miles")
       const parts = lower.split(' ');
       if (parts.length === 4 && (parts.at(2) === 'to' || parts.at(2) === 'in')) {
+          location.href = 'https:' + '//://google.com' + encodeURIComponent(raw.slice(3));
+  return;
+}
+
         const val = parseFloat(parts.at(0));
         const from = parts.at(1);
         const to = parts.at(3);
