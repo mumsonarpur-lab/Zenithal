@@ -106,19 +106,7 @@
       }
       const rec = new SR();
       rec.onresult = function(e) {
-        if (lower === 'zenmeet' || lower === 'zen meet') {
-  if (window.openZenMeet) { window.openZenMeet(); return; }
-}
-        if (lower === 'zenmeet' || lower === 'zen meet') {
-  if (window.openZenMeet) { window.openZenMeet(); return; }
-}
-
-        document.getElementById('q').value = e.results.item(0).item(0).transcript;
-        runSearch();
-      };
-      rec.start();
-    }
-
+      
     document.getElementById('searchForm').addEventListener('submit', function(e) {
       e.preventDefault();
       runSearch();
@@ -130,6 +118,12 @@
       const lower = raw.toLowerCase();
 
       if (lower.startsWith('!yt ')) {
+        if (lower === 'zenmeet' || lower === 'zen meet') {
+  if (window.openZenMeet) { window.openZenMeet(); return; }
+}
+        if (lower === 'zenmeet' || lower === 'zen meet') {
+  if (window.openZenMeet) { window.openZenMeet(); return; }
+}
         location.href = 'https://' + '://youtube.com' + encodeURIComponent(raw.slice(4));
         return;
       }
@@ -171,15 +165,15 @@
       // 3. Dictionary (e.g. "define zenith")
       if (lower.startsWith('define ')) {
         const word = raw.slice(7).trim();
-        try {
-          const dRes = await fetch('https://' + 'api.dictionaryapi.dev/api/v2/entries/en/' + encodeURIComponent(word));
-          if (dRes.ok) {
-            const dData = await dRes.json();
-            const entry = dData.at(0);
-            const meaning = entry.meanings.at(0);
+  try {
+  const dRes = await fetch('https://' + 'api.dictionaryapi.dev/api/v2/entries/en/' + encodeURIComponent(word));
+  if (dRes.ok) {
+    const dData = await dRes.json();
+    const entry = dData.at(0);
+    const meaning = entry.meanings.at(0);
+
             const def = meaning.definitions.at(0).definition;
             box.innerHTML = '<div class="card"><div class="title">📖 Dictionary: ' + entry.word + ' (' + meaning.partOfSpeech + ')</div><p style="margin:8px 0 0;">' + def + '</p></div>';
-
             return;
           }
         } catch (err) {}
