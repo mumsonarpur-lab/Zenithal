@@ -223,12 +223,12 @@
       }
       box.innerHTML = htmlOut;
     }
-    const urlQuery = new URLSearchParams(window.location.search).get('q');
-  const urlQuery = new URLSearchParams(window.location.search).get('q');
-const urlQuery = new URLSearchParams(window.location.search).get('q');
-
+   const urlQuery = new URLSearchParams(window.location.search).get('q');
+if (urlQuery) {
+  document.getElementById('q').value = urlQuery;
   runSearch();
 }
+
 
 const GITHUB_DATA_URL = "https://raw.githubusercontent.com/mumsonarpur-lab/Zenithal/main/zenithal_index.json";
 
