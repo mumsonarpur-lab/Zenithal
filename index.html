@@ -227,11 +227,13 @@
       box.innerHTML = htmlOut;
     }
     const urlQuery = new URLSearchParams(window.location.search).get('q');
-    if (urlQuery) {
-      document.getElementById('q').value = urlQuery;
-      runSearch();
- }
-const GITHUB_DATA_URL = "https://raw.githubusercontent.com/mumsonarpur-lab/Zenithal/main/zenithal_index.json";
+  const urlQuery = new URLSearchParams(window.location.search).get('q');
+if (urlQuery) {
+  document.getElementById('q').value = urlQuery;
+  runSearch();
+}
+
+const GITHUB_DATA_URL = "https://githubusercontent.com";
 
 async function syncZenithalEngine() {
   const feed = document.getElementById("zenithal-live-feed");
@@ -258,4 +260,6 @@ async function syncZenithalEngine() {
 
 syncZenithalEngine();
 setInterval(syncZenithalEngine, 600000);
-
+</script>
+</body>
+</html>
