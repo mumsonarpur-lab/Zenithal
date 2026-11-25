@@ -54,11 +54,11 @@
     <div class="logo" onclick="location.href='/'">Zenithal</div>
     <p style="color:var(--sub);margin:8px 0 24px;">Enterprise Global Discovery &amp; Intelligence</p>
     <form id="searchForm" style="width:100%;display:flex;flex-direction:column;align-items:center;">
-      <input type="text" id="q" class="box" placeholder="Try: 25 * 16, define zenith, weather Kolkata, 10 km to miles, or newton..." autofocus required>
+      <input type="text" id="q" class="box" placeholder="Try: 25 * 16, define zenith, weather Kolkata, 10 km to miles, or newton, news, everyday current news..." autofocus required>
       <div style="display:flex;gap:10px;margin-top:16px;">
         <button type="submit" class="btn">Search Zenithal</button>
         <button type="button" class="btn" id="micBtn" onclick="startVoice()">🎤 Voice</button>
-        <button type="button" class="btn" id="emailBtn"onlick="emailbox()">📧 Email</button>
+        
       </div>
     </form>
     <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:18px;max-width:600px;">
@@ -88,10 +88,10 @@
   <script>
       <script src="/data.js"></script>
   <script>
-    document.documentElement.setAttribute('data-theme', localStorage.getItem('zenithal_theme') || 'dark');
+    document.documentElement.setAttribute('data-theme', localStorage.getItem('zenithal_theme') || 'black');
 
     function toggleTheme() {
-      const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      const next = document.documentElement.getAttribute('data-theme') === 'black' ? 'white' : 'black';
       document.documentElement.setAttribute('data-theme', next);
       localStorage.setItem('zenithal_theme', next);
     }
