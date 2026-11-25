@@ -1,36 +1,36 @@
-// 1. Show the Zenithal Sign-In Gate immediately
+// 1. Show a clean, solid standalone Zenithal Sign-In page
 const gate = document.createElement("div");
 gate.id = "zenithal-auth-gate";
 gate.style.cssText = `
-  position: fixed; inset: 0; z-index: 9999;
-  background: var(--bg); color: var(--text);
+  position: fixed; inset: 0; z-index: 99999;
+  background: #f8fafc; color: #0f172a;
   display: flex; align-items: center; justify-content: center; padding: 20px;
+  font-family: system-ui, -apple-system, sans-serif;
 `;
 
 gate.innerHTML = `
-  <div class="card" style="width:100%; max-width:400px; text-align:center; padding:28px 24px;">
-    <div class="logo" style="font-size:40px; margin-bottom:4px;">Zenithal</div>
-    <p style="color:var(--sub); font-size:14px; margin:0 0 20px;">Sign in to access Zenithal Search Engine</p>
+  <div style="width:100%; max-width:400px; background:#ffffff; border:1px solid #e2e8f0; border-radius:16px; box-shadow:0 10px 25px rgba(0,0,0,0.08); text-align:center; padding:32px 26px;">
+    <div style="font-size:38px; font-weight:800; letter-spacing:-1px; margin-bottom:6px; color:#0f172a;">Zenithal</div>
+    <p style="color:#64748b; font-size:14px; margin:0 0 22px;">Sign in to access Zenithal Search Engine</p>
 
-    <button id="z-google-btn" class="btn" style="width:100%; background:#ffffff; color:#0f172a; border:1px solid var(--border); margin-bottom:14px;">
+    <button id="z-google-btn" style="width:100%; padding:11px; border-radius:10px; background:#ffffff; color:#0f172a; border:1px solid #cbd5e1; font-weight:600; cursor:pointer; margin-bottom:14px;">
       Continue with Google
     </button>
 
-    <div style="color:var(--sub); font-size:12px; margin-bottom:14px;">or use email</div>
+    <div style="color:#94a3b8; font-size:12px; margin-bottom:14px;">or use email</div>
 
-    <input id="z-email" type="email" class="box" placeholder="Email address" style="border-radius:10px; margin-bottom:10px; padding:11px 14px;" />
-    <input id="z-pass" type="password" class="box" placeholder="Password (min 6 chars)" style="border-radius:10px; margin-bottom:14px; padding:11px 14px;" />
+    <input id="z-email" type="email" placeholder="Email address" style="width:100%; box-sizing:border-box; border:1px solid #cbd5e1; border-radius:10px; margin-bottom:10px; padding:11px 14px; font-size:14px;" />
+    <input id="z-pass" type="password" placeholder="Password (min 6 chars)" style="width:100%; box-sizing:border-box; border:1px solid #cbd5e1; border-radius:10px; margin-bottom:16px; padding:11px 14px; font-size:14px;" />
 
     <div style="display:flex; gap:10px;">
-      <button id="z-login-btn" class="btn" style="flex:1;">Sign In</button>
-      <button id="z-signup-btn" class="btn-sm" style="flex:1; font-weight:600;">Create Account</button>
+      <button id="z-login-btn" style="flex:1; padding:11px; border:none; border-radius:10px; background:#2563eb; color:#ffffff; font-weight:600; cursor:pointer;">Sign In</button>
+      <button id="z-signup-btn" style="flex:1; padding:11px; border:1px solid #cbd5e1; border-radius:10px; background:#f1f5f9; color:#0f172a; font-weight:600; cursor:pointer;">Create Account</button>
     </div>
 
-    <p id="z-auth-msg" style="color:#f87171; font-size:13px; margin:12px 0 0; min-height:18px;"></p>
+    <p id="z-auth-msg" style="color:#ef4444; font-size:13px; margin:14px 0 0; min-height:18px;"></p>
   </div>
 `;
 document.body.appendChild(gate);
-
 // 2. Load Firebase safely without URL stripping
 const sdkBase = "https:" + "//www." + "gstatic.com" + "/firebasejs/10.12.2/";
 const { initializeApp } = await import(sdkBase + "firebase-app.js");
