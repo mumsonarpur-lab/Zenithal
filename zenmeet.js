@@ -145,17 +145,16 @@ function startZenMeetCall(roomCode) {
       interfaceConfigOverwrite: { APP_NAME: "ZenMeet", SHOW_JITSI_WATERMARK: false }
     });
   }
-}
-
-window.openZenMeet = function (presetCode = "") {
-  zmOverlay.style.display = "flex";
-  document.getElementById("zm-lobby").style.display = "flex";
-       localStorage.setItem("zenmeet_contacts", JSON.stringify(savedContacts));
+      picked.forEach((p) => {
+        const name = (p.name && p.name) || "Contact";
+        const info = (p.tel && p.tel) || (p.email && p.email) || "";
+        if (info) savedContacts.push({ name, info });
+      });
+      localStorage.setItem("zenmeet_contacts", JSON.stringify(savedContacts));
       renderContacts();
     } catch (e) {}
   } else {
-    alert("Phone Contacts import works on Android devices! On desktop, add contacts using the boxes below.");
-  }
+
 };
 
 document.getElementById("zm-enter-room-btn").onclick = () => startZenMeetCall(activeRoomCode);
