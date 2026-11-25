@@ -87,7 +87,7 @@
   <script>
     
 rec.onresult = function(e) {
-// Theme initialization and toggle functions
+
 document.documentElement.setAttribute('data-theme', localStorage.getItem('zenithal_theme') || 'dark');
 function toggleTheme() {
   const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
@@ -125,11 +125,12 @@ async function runSearch() {
     if (window.openZenMeet) { window.openZenMeet(); return; }
   }
   if (lower.startsWith('!yt ')) {
-    location.href = 'https:' + '//://youtube.com' + encodeURIComponent(raw.slice(4));
+   if (lower.startsWith('!g ')) {
+    location.href = 'https:' + '//://google.com' + encodeURIComponent(raw.slice(3));
     return;
   }
-  if (lower.startsWith('!g ')) {
-    const box = document.getElementById('results');
+
+  const box = document.getElementById('results');
   document.getElementById('homeBox').style.padding = '24px 20px';
   box.innerHTML = '<div class="card">Searching Zenithal...</div>';
 
@@ -142,9 +143,11 @@ async function runSearch() {
     } catch (err) {}
   }
 
+  // 2. Unit Converter (e.g. "10 km to miles")
+  const parts = lower.split(' ');
+  if (parts.length === 4 && (parts.at(2) === 'to' || parts.at(2) === 'in')) {
+    const val = parseFloat(parts.at(0));
 
-      // 2. Unit Converter (e.g. "10 km to miles")
-      const parts = lower.split(' ');
       if (parts.length === 4 && (parts.at(2) === 'to' || parts.at(2) === 'in')) {
           location.href = 'https:' + '//://google.com' + encodeURIComponent(raw.slice(3));
   return;
