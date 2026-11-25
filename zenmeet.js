@@ -150,32 +150,27 @@ function startZenMeetCall(roomCode) {
 window.openZenMeet = function (presetCode = "") {
   zmOverlay.style.display = "flex";
   document.getElementById("zm-lobby").style.display = "flex";
-  document.getElementById("zm-call-area").style.display = "none";
-  document.getElementById("zm-room-badge").textContent = "Contacts & Invite Lobby";
-  document.getElementById("zm-close-btn").textContent = "Close";
-  setLobbyMeetingCode(presetCode || generateMeetCode());
-  renderContacts();
+       localStorage.setItem("zenmeet_contacts", JSON.stringify(savedContacts));
+      renderContacts();
+    } catch (e) {}
+  } else {
+    alert("Phone Contacts import works on Android devices! On desktop, add contacts using the boxes below.");
+  }
 };
 
-document.getElementById("zm-copy-link-btn").onclick = function () {
-  navigator.clipboard.writeText(activeMeetingUrl);
-  this.textContent = "Copied!";
-  setTimeout(() => (this.textContent = "Copy"), 2000);
+document.getElementById("zm-enter-room-btn").onclick = () => startZenMeetCall(activeRoomCode);
+
+document.getElementById("zm-join-code-btn").onclick = () => {
+  const code = document.getElementById("zm-code-input").value;
+  if (code.trim()) startZenMeetCall(code);
 };
 
-document.getElementById("zm-new-link-btn").onclick = () => setLobbyMeetingCode(generateMeetCode());
-
-document.getElementById("zm-add-contact-btn").onclick = () => {
-  const name = document.getElementById("zm-contact-name").value.trim();
-  const info = document.getElementById("zm-contact-info").value.trim();
-  if (!name || !info) return;
-  savedContacts.push({ name, info });
-  localStorage.setItem("zenmeet_contacts", JSON.stringify(savedContacts));
-  document.getElementById("zm-contact-name").value = "";
-  document.getElementById("zm-contact-info").value = "";
-  renderContacts();
+document.getElementById("zm-close-btn").onclick = () => {
+  if (jitsiApi) { jitsiApi.dispose(); jitsiApi = null; }
+  zmOverlay.style.display = "none";
 };
 
-document.getElementById("zm-phone-contacts-btn").onclick = async () => {
-  if ("contacts" in navigator && "ContactsManager" in window) {
-    try {
+const urlParams = new URLSearchParams(window.location.search);
+if (urlParams.get("zenmeet")) {
+  openZenMeet(urlParams.get("zenmeet"));
+}
