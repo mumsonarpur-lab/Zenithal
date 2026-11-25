@@ -231,25 +231,31 @@
       document.getElementById('q').value = urlQuery;
       runSearch();
  }
+const GITHUB_DATA_URL = "https://raw.githubusercontent.com/mumsonarpur-lab/Zenithal/main/zenithal_index.json";
 
-const GITHUB_DATA_URL = "https://githubusercontent.com";
 async function syncZenithalEngine() {
+  const feed = document.getElementById("zenithal-live-feed");
+  if (!feed) return;
+
   try {
     const response = await fetch(`${GITHUB_DATA_URL}?t=${Date.now()}`);
+    if (!response.ok) throw new Error("Index not ready yet");
     const data = await response.json();
-    const feed = document.getElementById("zenithal-live-feed");
+
+    const topStory = data.top_news && data.top_news[0] ? data.top_news[0] : null;
+    const newsHtml = topStory
+      ? `<div style="margin-top: 6px;">📰 <b>Breaking:</b> <a href="${topStory.link}" target="_blank" style="color: var(--accent); text-decoration: none;">${topStory.title}</a></div>`
+      : "";
+
     feed.innerHTML = `
       <div>🟢 <b>${data.weather}</b> &bull; Index Updated: <b>${data.last_updated}</b></div>
-      <div style="margin-top: 6px;">📰 <b>Breaking:</b> <a href="${data.top_news[0].link}" target="_blank" style="color: var(--accent); text-decoration: none;">${data.top_news[0].title}</a></div>
+      ${newsHtml}
     `;
   } catch (err) {
-    console.error("Sync error:", err);
+    feed.textContent = "🟢 Zenithal Live Engine Connected";
   }
 }
 
 syncZenithalEngine();
 setInterval(syncZenithalEngine, 600000);
-</script>
-</body>
-</html>
 
