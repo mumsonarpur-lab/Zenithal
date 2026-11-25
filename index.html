@@ -106,41 +106,52 @@
       }
     const rec = new SR();
 rec.onresult = function(e) {
-  document.getElementById('q').value = e.results.item(0).item(0).transcript;
+// Theme initialization and toggle functions
+document.documentElement.setAttribute('data-theme', localStorage.getItem('zenithal_theme') || 'dark');
+function toggleTheme() {
+  const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('zenithal_theme', next);
+}
+
+// Quick search and voice recognition handlers
+function quickSearch(text) {
+  document.getElementById('q').value = text;
   runSearch();
-};
-rec.start();
-}     
-    document.getElementById('searchForm').addEventListener('submit', function(e) {
-      e.preventDefault();
-      runSearch();
-    });
-
-    async function runSearch() {
-      const raw = document.getElementById('q').value.trim();
-      if (!raw) return;
-      const lower = raw.toLowerCase();
-if (lower === 'zenmeet' || lower === 'zen meet') {
-  if (window.openZenMeet) { window.openZenMeet(); return; }
+}
+function startVoice() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) { alert('Voice search works in Chrome and Edge.'); return; }
+  const rec = new SR();
+  rec.onresult = function(e) {
+    document.getElementById('q').value = e.results.item(0).item(0).transcript;
+    runSearch();
+  };
+  rec.start();
 }
 
-if (lower.startsWith('!yt ')) {
-  location.href = 'https://' + '://youtube.com' + encodeURIComponent(raw.slice(4));
-  return;
+// Form submission and routing logic for search, ZenMeet, YouTube, and Google
+document.getElementById('searchForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  runSearch();
+});
+async function runSearch() {
+  const raw = document.getElementById('q').value.trim();
+  if (!raw) return;
+  const lower = raw.toLowerCase();
+
+  if (lower === 'zenmeet' || lower === 'zen meet') {
+    if (window.openZenMeet) { window.openZenMeet(); return; }
+  }
+  if (lower.startsWith('!yt ')) {
+    location.href = 'https:' + '//://youtube.com' + encodeURIComponent(raw.slice(4));
+    return;
+  }
+  if (lower.startsWith('!g ')) {
+    location.href = 'https:' + '//://google.com' + encodeURIComponent(raw.slice(3));
+    return;
+  }
 }
-        return;
-      }
-
-      const box = document.getElementById('results');
-      document.getElementById('homeBox').style.padding = '24px 20px';
-      box.innerHTML = '<div class="card">Searching Zenithal...</div>';
-
-      // 1. Math Calculator
-      if (/^[0-9+\-*/().\s]+$/.test(raw)) {
-        try {
-          const ans = Function('"use strict";return (' + raw + ')')();
-          box.innerHTML = '<div class="card"><div class="title">🧮 Zenithal Calculator</div><p style="font-size:22px;font-weight:bold;margin:8px 0 0;">' + raw + ' = ' + ans + '</p></div>';
-          return;
         } catch (err) {}
       }
 
