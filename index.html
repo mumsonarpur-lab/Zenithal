@@ -105,6 +105,11 @@
         return;
       }
       const rec = new SR();
+        document.getElementById('q').value = e.results.item(0).item(0).transcript;
+  runSearch();
+};
+rec.start();
+}
       rec.onresult = function(e) {
       
     document.getElementById('searchForm').addEventListener('submit', function(e) {
