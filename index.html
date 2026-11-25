@@ -104,14 +104,13 @@
         alert('Voice search works in Chrome and Edge.');
         return;
       }
-      const rec = new SR();
-        document.getElementById('q').value = e.results.item(0).item(0).transcript;
+    const rec = new SR();
+rec.onresult = function(e) {
+  document.getElementById('q').value = e.results.item(0).item(0).transcript;
   runSearch();
 };
 rec.start();
-}
-      rec.onresult = function(e) {
-      
+}     
     document.getElementById('searchForm').addEventListener('submit', function(e) {
       e.preventDefault();
       runSearch();
@@ -121,19 +120,14 @@ rec.start();
       const raw = document.getElementById('q').value.trim();
       if (!raw) return;
       const lower = raw.toLowerCase();
+if (lower === 'zenmeet' || lower === 'zen meet') {
+  if (window.openZenMeet) { window.openZenMeet(); return; }
+}
 
-      if (lower.startsWith('!yt ')) {
-        if (lower === 'zenmeet' || lower === 'zen meet') {
-  if (window.openZenMeet) { window.openZenMeet(); return; }
+if (lower.startsWith('!yt ')) {
+  location.href = 'https://' + '://youtube.com' + encodeURIComponent(raw.slice(4));
+  return;
 }
-        if (lower === 'zenmeet' || lower === 'zen meet') {
-  if (window.openZenMeet) { window.openZenMeet(); return; }
-}
-        location.href = 'https://' + '://youtube.com' + encodeURIComponent(raw.slice(4));
-        return;
-      }
-      if (lower.startsWith('!g ')) {
-        location.href = 'https://' + '://google.com' + encodeURIComponent(raw.slice(3));
         return;
       }
 
@@ -261,6 +255,7 @@ async function syncZenithalEngine() {
   }
 }
 syncZenithalEngine();
+</script>
 <script type="module" src="/auth.js"></script>
 <script src="/zenmeet.js"></script>
 </body>
