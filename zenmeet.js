@@ -1,4 +1,4 @@
-// ZenMeet - Google Meet Style Lobby, Contacts Picker & Video Rooms
+// ZenMeet - Search-Triggered Contacts & Video Meeting Flow (No Topbar Button)
 const jitsiScript = document.createElement("script");
 jitsiScript.src = "https:" + "//meet.jit.si/external_api.js";
 document.head.appendChild(jitsiScript);
@@ -23,7 +23,6 @@ zmOverlay.style.cssText = `
 `;
 
 zmOverlay.innerHTML = `
-  <!-- Top Bar -->
   <div style="display:flex; align-items:center; justify-content:space-between; padding:14px 22px; background:#ffffff; border-bottom:1px solid #e2e8f0;">
     <div style="display:flex; align-items:center; gap:10px;">
       <span style="font-size:22px; font-weight:800; color:#2563eb;">ZenMeet</span>
@@ -32,13 +31,12 @@ zmOverlay.innerHTML = `
     <button id="zm-close-btn" style="padding:8px 16px; border-radius:8px; border:none; background:#ef4444; color:#fff; font-weight:600; cursor:pointer; font-size:13px;">Close</button>
   </div>
 
-  <!-- Step 1: Contacts & Share Link Lobby -->
+  <!-- Step 1: Contacts & Share Link First -->
   <div id="zm-lobby" style="flex:1; overflow-y:auto; display:flex; align-items:center; justify-content:center; padding:20px;">
     <div style="width:100%; max-width:520px; background:#ffffff; border:1px solid #e2e8f0; border-radius:18px; box-shadow:0 10px 25px rgba(0,0,0,0.06); padding:28px;">
       <h2 style="margin:0 0 6px; font-size:24px; font-weight:800;">Video calls and meetings for everyone</h2>
       <p style="margin:0 0 20px; color:#64748b; font-size:14px;">Select contacts to share your private meeting link before joining.</p>
 
-      <!-- Meeting Link Box -->
       <div style="background:#f1f5f9; border:1px solid #cbd5e1; border-radius:12px; padding:14px; margin-bottom:18px;">
         <div style="font-size:12px; font-weight:600; color:#475569; margin-bottom:6px;">Your Private ZenMeet Link</div>
         <div style="display:flex; gap:8px; align-items:center;">
@@ -48,25 +46,21 @@ zmOverlay.innerHTML = `
         </div>
       </div>
 
-      <!-- Contacts Section -->
       <div style="margin-bottom:18px;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
           <span style="font-size:14px; font-weight:700;">Share With Your Contacts</span>
           <button id="zm-phone-contacts-btn" style="padding:5px 10px; border-radius:8px; border:1px solid #cbd5e1; background:#f8fafc; color:#2563eb; font-size:12px; font-weight:600; cursor:pointer;">+ Phone Contacts</button>
         </div>
 
-        <!-- Quick Add Contact -->
         <div style="display:flex; gap:6px; margin-bottom:10px;">
           <input id="zm-contact-name" type="text" placeholder="Contact name" style="flex:1; padding:8px 10px; border-radius:8px; border:1px solid #cbd5e1; font-size:13px;" />
           <input id="zm-contact-info" type="text" placeholder="Email or WhatsApp number" style="flex:1.2; padding:8px 10px; border-radius:8px; border:1px solid #cbd5e1; font-size:13px;" />
           <button id="zm-add-contact-btn" style="padding:8px 12px; border:none; border-radius:8px; background:#0f172a; color:#fff; font-size:13px; font-weight:600; cursor:pointer;">Add</button>
         </div>
 
-        <!-- Saved Contacts List -->
         <div id="zm-contacts-list" style="max-height:160px; overflow-y:auto; border:1px solid #e2e8f0; border-radius:10px; padding:6px;"></div>
       </div>
 
-      <!-- Enter Room or Join Existing Code -->
       <div style="display:flex; gap:10px; margin-bottom:14px;">
         <button id="zm-enter-room-btn" style="flex:1; padding:13px; border:none; border-radius:10px; background:#2563eb; color:#fff; font-size:15px; font-weight:700; cursor:pointer;">
           Join Meeting Room →
@@ -117,10 +111,11 @@ window.shareZenMeetTo = function (idx) {
   if (navigator.share) {
     navigator.share({ title: "ZenMeet Invitation", text: message, url: activeMeetingUrl }).catch(() => {});
   } else if (c.info.includes("@")) {
-    window.open(`mailto:${encodeURIComponent(c.info)}?subject=${encodeURIComponent("ZenMeet Video Call Invite")}&body=${encodeURIComponent(message)}`);
+    window.open("mailto:" + encodeURIComponent(c.info) + "?subject=" + encodeURIComponent("ZenMeet Video Call Invite") + "&body=" + encodeURIComponent(message));
   } else {
     const phone = c.info.replace(/[^0-9]/g, "");
-    window.open(`https://wa.me{phone}?text=${encodeURIComponent(message)}`, "_blank");
+    const waBase = "https:" + "//wa.me/";
+    window.open(waBase + phone + "?text=" + encodeURIComponent(message), "_blank");
   }
 };
 
@@ -162,7 +157,6 @@ window.openZenMeet = function (presetCode = "") {
   renderContacts();
 };
 
-// Lobby Button Events
 document.getElementById("zm-copy-link-btn").onclick = function () {
   navigator.clipboard.writeText(activeMeetingUrl);
   this.textContent = "Copied!";
@@ -181,8 +175,7 @@ document.getElementById("zm-add-contact-btn").onclick = () => {
   document.getElementById("zm-contact-info").value = "";
   renderContacts();
 };
-<script src="/zenmeet.js"></script>
-<script type="module" src="/auth.js"></script>
-<script src="/zenmeet.js"></script>
-</body>
-</html>
+
+document.getElementById("zm-phone-contacts-btn").onclick = async () => {
+  if ("contacts" in navigator && "ContactsManager" in window) {
+    try {
