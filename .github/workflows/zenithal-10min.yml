@@ -1,0 +1,32 @@
+name: Zenithal 10-Minute Engine Update
+
+on:
+  schedule:
+    - cron: '*/10 * * * *' # Runs automatically every 10 minutes
+  workflow_dispatch: # Lets you also test it manually with 1 click
+
+permissions:
+  contents: write
+
+jobs:
+  update-engine:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Zenithal repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run Zenithal updater & crawler
+        run: python zenithal_updater.py
+
+      - name: Push fresh index to GitHub
+        run: |
+          git config user.name "Zenithal-Bot"
+          git config user.email "bot@zenithal-search.vercel.app"
+          git add zenithal_index.json
+          git commit -m "Update Zenithal index [skip ci]" || exit 0
+          git push
