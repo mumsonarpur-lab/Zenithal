@@ -233,7 +233,7 @@ if (urlQuery) {
   runSearch();
 }
 
-const GITHUB_DATA_URL = "https://githubusercontent.com";
+const GITHUB_DATA_URL = "https://raw.githubusercontent.com/mumsonarpur-lab/Zenithal/main/zenithal_index.json";
 
 async function syncZenithalEngine() {
   const feed = document.getElementById("zenithal-live-feed");
@@ -244,7 +244,7 @@ async function syncZenithalEngine() {
     if (!response.ok) throw new Error("Index not ready yet");
     const data = await response.json();
 
-    const topStory = data.top_news && data.top_news[0] ? data.top_news[0] : null;
+    const topStory = Array.isArray(data.top_news) ? data.top_news.at(0) : null;
     const newsHtml = topStory
       ? `<div style="margin-top: 6px;">📰 <b>Breaking:</b> <a href="${topStory.link}" target="_blank" style="color: var(--accent); text-decoration: none;">${topStory.title}</a></div>`
       : "";
@@ -260,6 +260,10 @@ async function syncZenithalEngine() {
 
 syncZenithalEngine();
 setInterval(syncZenithalEngine, 600000);
+</script>
+</body>
+</html>
+
 </script>
 </body>
 </html>
