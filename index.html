@@ -61,19 +61,19 @@
         
       </div>
     </form>
-    <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:18px;max-width:600px;">
-      <button type="button" class="chip" onclick="quickSearch('25 * 16')">🧮 Math: 25 * 16</button>
-      <button type="button" class="chip" onclick="quickSearch('define zenith')">📖 define zenith</button>
-      <button type="button" class="chip" onclick="quickSearch('weather Kolkata')">🌤️ weather Kolkata</button>
-      <button type="button" class="chip" onclick="quickSearch('10 km to miles')">⚖️ 10 km to miles</button>
-      <button type="button" class="chip" onclick="quickSearch('newton')">🔬 Newton's Laws</button>
-      <button type="button" class="chip" onclick="quickSearch('news')">📰 News</button>
-      <button type="button" class="chip" onclick="quickSearch('everyday current news)">📺 Everyday current news</button>
-    </div>
-  </div>
-
+   <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:18px;max-width:600px;">
+  <button type="button" class="chip" onclick="quickSearch('25 * 16')">🧮 Math: 25 * 16</button>
+  <button type="button" class="chip" onclick="quickSearch('define zenith')">📖 define zenith</button>
+  <button type="button" class="chip" onclick="quickSearch('weather Kolkata')">🌤 weather Kolkata</button>
+  <button type="button" class="chip" onclick="quickSearch('10 km to miles')">⚖ 10 km to miles</button>
+  <button type="button" class="chip" onclick="quickSearch('newton')">🔬 Newton's Laws</button>
+  <button type="button" class="chip" onclick="quickSearch('news')">📰 News</button>
+  <button type="button" class="chip" onclick="quickSearch('everyday current news')">📺 Everyday current news</button>
+     
+</div>
+<div id="zenithal-live-feed" style="margin-top: 18px; font-size: 13px; color: var(--sub);"></div>
+</div>
   <div class="main" id="results"></div>
-
   <footer>
     <div style="margin-bottom:8px;">
       <a href="/about.html">About</a> •
@@ -230,7 +230,26 @@
     if (urlQuery) {
       document.getElementById('q').value = urlQuery;
       runSearch();
-    }
-  </script>
+ }
+
+const GITHUB_DATA_URL = "https://githubusercontent.com";
+async function syncZenithalEngine() {
+  try {
+    const response = await fetch(`${GITHUB_DATA_URL}?t=${Date.now()}`);
+    const data = await response.json();
+    const feed = document.getElementById("zenithal-live-feed");
+    feed.innerHTML = `
+      <div>🟢 <b>${data.weather}</b> &bull; Index Updated: <b>${data.last_updated}</b></div>
+      <div style="margin-top: 6px;">📰 <b>Breaking:</b> <a href="${data.top_news[0].link}" target="_blank" style="color: var(--accent); text-decoration: none;">${data.top_news[0].title}</a></div>
+    `;
+  } catch (err) {
+    console.error("Sync error:", err);
+  }
+}
+
+syncZenithalEngine();
+setInterval(syncZenithalEngine, 600000);
+</script>
 </body>
 </html>
+
