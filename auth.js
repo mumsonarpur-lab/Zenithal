@@ -1,27 +1,4 @@
-import { initializeApp } from "https://gstatic.com";
-import {
-  getAuth,
-  onAuthStateChanged,
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-  GoogleAuthProvider,
-  signInWithPopup,
-  signOut
-} from "https://gstatic.com";
-
-// 1. Paste your Firebase Web App config here
-const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT_://firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  appId: "YOUR_APP_ID"
-};
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const googleProvider = new GoogleAuthProvider();
-
-// 2. Build the Zenithal Sign-In Gate UI (matches your existing theme variables)
+// 1. Show the Zenithal Sign-In Gate immediately
 const gate = document.createElement("div");
 gate.id = "zenithal-auth-gate";
 gate.style.cssText = `
@@ -54,7 +31,29 @@ gate.innerHTML = `
 `;
 document.body.appendChild(gate);
 
-// 3. Add User Profile + Sign Out button to your topbar
+// 2. Load Firebase safely without URL stripping
+const sdkBase = "https:" + "//www." + "gstatic.com" + "/firebasejs/10.12.2/";
+const { initializeApp } = await import(sdkBase + "firebase-app.js");
+const {
+  getAuth,
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithPopup,
+  signOut
+} = await import(sdkBase + "firebase-auth.js");
+const firebaseConfig = {
+  apiKey: "AIzaSyCThmC-LQZ6A6-XDoqwpogbxJVopb1zpkI",
+  authDomain: "zenithal-ff094.firebaseapp.com",
+  projectId: "zenithal-ff094",
+  appId: "1:83091113957:web:b3f5da8aada2e28a79d10c"
+};
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const googleProvider = new GoogleAuthProvider();
+
+// 4. Add User Profile + Sign Out button to your topbar
 const topbar = document.querySelector(".topbar");
 const userPill = document.createElement("div");
 userPill.id = "z-user-pill";
@@ -63,7 +62,6 @@ topbar.appendChild(userPill);
 
 const msg = document.getElementById("z-auth-msg");
 
-// Button Actions
 document.getElementById("z-google-btn").onclick = async () => {
   msg.textContent = "";
   try {
@@ -95,7 +93,7 @@ document.getElementById("z-signup-btn").onclick = async () => {
   }
 };
 
-// 4. Lock or Unlock Zenithal based on login state
+// 5. Lock or Unlock Zenithal based on login state
 onAuthStateChanged(auth, (user) => {
   if (user) {
     gate.style.display = "none";
