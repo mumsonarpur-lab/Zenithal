@@ -148,12 +148,19 @@ async function runSearch() {
     return;
   }
   if (lower.startsWith('!g ')) {
-    location.href = 'https:' + '//://google.com' + encodeURIComponent(raw.slice(3));
-    return;
+    const box = document.getElementById('results');
+  document.getElementById('homeBox').style.padding = '24px 20px';
+  box.innerHTML = '<div class="card">Searching Zenithal...</div>';
+
+  // 1. Math Calculator
+  if (/^[0-9+\-*/().\s]+$/.test(raw)) {
+    try {
+      const ans = Function('"use strict";return (' + raw + ')')();
+      box.innerHTML = '<div class="card"><div class="title">🧮 Zenithal Calculator</div><p style="font-size:22px;font-weight:bold;margin:8px 0 0;">' + raw + ' = ' + ans + '</p></div>';
+      return;
+    } catch (err) {}
   }
-}
-        } catch (err) {}
-      }
+
 
       // 2. Unit Converter (e.g. "10 km to miles")
       const parts = lower.split(' ');
