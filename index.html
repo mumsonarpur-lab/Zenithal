@@ -1,291 +1,67 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Zenithal — Official Web Search Engine</title>
-  <meta name="description" content="Zenithal is a fast, clean, and modern web search engine built by Abhinit Pandey with instant math, dictionary, weather, unit converter, and voice search." />
-  <link rel="canonical" href="https://vercel.app" />
-  <meta property="og:site_name" content="Zenithal" />
-  <meta property="og:title" content="Zenithal — Official Web Search Engine" />
-  <meta property="og:description" content="Zenithal is a fast, clean, and modern web search engine built by Abhinit Pandey." />
-  <meta property="og:url" content="https://vercel.app" />
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    "name": "Zenithal",
-    "alternateName": ["Zenithal Search", "Zenithal Search Engine"],
-    "url": "https://vercel.app"
-  }
-  </script>
-  <link rel="manifest" href="/manifest.json">
-  <style>
-    :root[data-theme="dark"] { --bg: #0f172a; --card: #1e293b; --text: #f1f5f9; --sub: #94a3b8; --accent: #3b82f6; --border: #334155; }
-    :root[data-theme="light"] { --bg: #f8fafc; --card: #ffffff; --text: #0f172a; --sub: #475569; --accent: #2563eb; --border: #cbd5e1; }
-    * { box-sizing: border-box; }
-    body { margin: 0; font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
-    .topbar { display: flex; justify-content: flex-end; align-items: center; gap: 10px; padding: 14px 20px; }
-    .badge { background: rgba(16, 185, 129, 0.15); color: #34d399; padding: 5px 12px; border-radius: 99px; font-size: 12px; font-weight: 600; }
-    .btn-sm { background: var(--card); color: var(--text); border: 1px solid var(--border); padding: 6px 14px; border-radius: 8px; cursor: pointer; font-size: 13px; }
-    .home { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; text-align: center; }
-    .logo { font-size: 56px; font-weight: 800; color: var(--accent); letter-spacing: -1px; cursor: pointer; }
-    .box { width: 100%; max-width: 580px; padding: 14px 20px; border-radius: 99px; border: 1px solid var(--border); background: var(--card); color: var(--text); font-size: 16px; outline: none; }
-    .box:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25); }
-    .btn { background: var(--accent); color: #fff; border: none; padding: 11px 22px; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer; }
-    .btn:hover { opacity: 0.92; }
-    .chip { padding: 6px 12px; border-radius: 99px; border: 1px solid var(--border); background: var(--card); color: var(--text); cursor: pointer; font-size: 13px; }
-    .chip:hover { border-color: var(--accent); }
-    .main { width: 100%; max-width: 720px; margin: 0 auto; padding: 0 20px 30px; }
-    .card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 18px 20px; margin-bottom: 14px; text-align: left; }
-    .title { font-size: 18px; font-weight: 700; color: #60a5fa; text-decoration: none; }
-    footer { text-align: center; padding: 20px 16px; color: var(--sub); font-size: 14px; border-top: 1px solid rgba(148, 163, 184, 0.15); margin-top: auto; }
-    footer a { color: var(--sub); margin: 0 10px; text-decoration: none; }
-    footer a:hover { color: var(--accent); }
+<!-- saved from url=(0022)http://127.0.0.1:5000/ -->
+<html lang="en" data-theme="dark"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="google-site-verification" content="celRh5m3sgG_1hAXN0hw7IsFpL272ucsU1dihV9vtxw" />
+<title>Zenithal Search™ v6.0</title>
+    <meta name="description" content="Zenithal Search is a fast, clean, and modern web search engine built by Abhinit Pandey." />
+<link rel="canonical" href="https://zenithal-search.vercel.app" />
 
-    /* Zenithal Meet Quick-Launch Card */
-    .zmeet-card {
-      background: linear-gradient(135deg, #1d4ed8 0%, #1e3a8a 100%);
-      color: #ffffff;
-      border-radius: 14px;
-      padding: 20px;
-      margin-bottom: 16px;
-      box-shadow: 0 6px 18px rgba(37, 99, 235, 0.25);
-      text-align: left;
-    }
-    .zmeet-badge {
-      display: inline-block;
-      background: rgba(255, 255, 255, 0.2);
-      padding: 3px 10px;
-      border-radius: 99px;
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-      margin-bottom: 8px;
-    }
-    .zmeet-card h3 { margin: 0; font-size: 20px; }
-    .zmeet-card p { margin: 6px 0 16px; font-size: 14px; opacity: 0.9; }
-    .zmeet-actions { display: flex; flex-wrap: wrap; gap: 10px; }
-    .zmeet-btn-primary {
-      background: #ffffff;
-      color: #1d4ed8;
-      border: none;
-      padding: 10px 18px;
-      border-radius: 8px;
-      font-weight: 700;
-      font-size: 14px;
-      cursor: pointer;
-    }
-    .zmeet-join-group { display: flex; gap: 6px; flex: 1; min-width: 220px; }
-    .zmeet-input {
-      flex: 1;
-      padding: 10px 12px;
-      border-radius: 8px;
-      border: 1px solid rgba(255, 255, 255, 0.4);
-      background: rgba(255, 255, 255, 0.15);
-      color: #ffffff;
-      font-size: 14px;
-      outline: none;
-    }
-    .zmeet-input::placeholder { color: rgba(255, 255, 255, 0.75); }
-    .zmeet-btn-secondary {
-      background: rgba(255, 255, 255, 0.22);
-      color: #ffffff;
-      border: 1px solid rgba(255, 255, 255, 0.4);
-      padding: 10px 16px;
-      border-radius: 8px;
-      font-weight: 600;
-      font-size: 14px;
-      cursor: pointer;
-    }
-  </style>
+    <link rel="manifest" href="/manifest.json">
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js');
+  }
+</script>
+
+<style>
+:root { --bg:#fff; --text:#1e293b; --sub:#64748b; --card:#f8fafc; --border:#e2e8f0; --accent:#4f46e5; --link:#2563eb; }
+[data-theme="dark"] { --bg:#0f172a; --text:#f1f5f9; --sub:#94a3b8; --card:#1e293b; --border:#334155; --accent:#6366f1; --link:#60a5fa; }
+body { font-family:'Segoe UI',sans-serif; margin:0; background:var(--bg); color:var(--text); }
+.bar { display:flex; justify-content:flex-end; align-items:center; padding:14px 28px; gap:12px; font-size:13px; }
+.badge { background:rgba(16,185,129,.15); color:#10b981; padding:4px 10px; border-radius:12px; font-weight:600; }
+.btn-sm { background:var(--card); border:1px solid var(--border); color:var(--text); padding:6px 12px; border-radius:8px; cursor:pointer; text-decoration:none; }
+.home { display:flex; flex-direction:column; align-items:center; justify-content:center; height:74vh; padding:0 20px; }
+.logo { font-size:62px; font-weight:800; background:linear-gradient(135deg,#4f46e5,#06b6d4); -webkit-background-clip:text; -webkit-text-fill-color:transparent; text-decoration:none; }
+.box { width:100%; max-width:580px; padding:14px 20px; font-size:16px; background:var(--card); color:var(--text); border:2px solid var(--border); border-radius:12px; outline:none; }
+.btn { margin-top:18px; padding:12px 26px; font-size:15px; font-weight:600; background:var(--accent); color:#fff; border:none; border-radius:10px; cursor:pointer; }
+.hdr { display:flex; align-items:center; justify-content:space-between; padding:14px 28px; border-bottom:1px solid var(--border); gap:16px; }
+.hdr .logo { font-size:28px; }
+.tabs { display:flex; gap:20px; padding-left:40px; border-bottom:1px solid var(--border); font-size:14px; }
+.tab { padding:10px 4px; text-decoration:none; color:var(--sub); border-bottom:3px solid transparent; }
+.tab.active { color:var(--accent); border-bottom-color:var(--accent); font-weight:700; }
+.main { max-width:720px; margin:24px 40px; }
+.card { background:var(--card); border-left:4px solid var(--accent); padding:14px; border-radius:8px; margin-bottom:20px; }
+.item { margin-bottom:22px; }
+.title { font-size:18px; font-weight:600; color:var(--link); text-decoration:none; }
+.grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:14px; padding:24px 40px; }
+.img-card { background:var(--card); border:1px solid var(--border); border-radius:8px; overflow:hidden; text-decoration:none; color:var(--text); }
+.img-card img { width:100%; height:140px; object-fit:cover; display:block; }
+</style>
 </head>
 <body>
-  <div class="topbar">
-    <span class="badge">Zenithal Enterprise v6.0</span>
-        <a href="meet.html" class="btn-sm" style="text-decoration: none;">📹 Zenithal Meet</a>
-    <span class="badge">Zenithal Enterprise v7.0</span>
-    <a href="meet.html" class="btn-sm" style="text-decoration: none;">📹 Zenithal Meet</a>
+
+<div class="bar">
+    <span class="badge">Zenithal™ Enterprise v6.0</span>
+    <a href="http://127.0.0.1:5000/enterprise" class="btn-sm">Enterprise Console</a>
     <button class="btn-sm" onclick="toggleTheme()">Theme</button>
-  </div>
-
-  <div class="home" id="homeBox">
-    <div class="logo" onclick="location.href='/'">Zenithal</div>
-    <p style="color:var(--sub);margin:8px 0 24px;">Enterprise Global Discovery &amp; Intelligence</p>
-    <form id="searchForm" style="width:100%;display:flex;flex-direction:column;align-items:center;">
-      <input type="text" id="q" class="box" placeholder="Try: 25 * 16, define zenith, weather Kolkata, 10 km to miles, or newton..." autofocus required>
-      <input type="text" id="q" class="box" placeholder="Try: zenithal meet, 25 * 16, define zenith, weather Kolkata, 10 km to miles..." autofocus required>
-      <div style="display:flex;gap:10px;margin-top:16px;">
+</div>
+<div class="home">
+    <div class="logo">Zenithal™</div>
+    <p style="color:var(--sub);margin:8px 0 26px;">Enterprise Global Discovery &amp; Intelligence</p>
+    <form action="http://127.0.0.1:5000/search" method="get" style="width:100%;display:flex;flex-direction:column;align-items:center;">
+        <input type="text" name="q" class="box" placeholder="Try searching: python, wikipedia, news, or 25 * 16..." autofocus="" required="">
         <button type="submit" class="btn">Search Zenithal</button>
-        <button type="button" class="btn" id="micBtn" onclick="startVoice()">🎤 Voice</button>
-      </div>
     </form>
-    <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:18px;max-width:600px;">
-    <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:18px;max-width:650px;">
-      <button type="button" class="chip" onclick="quickSearch('zenithal meet')">📹 Zenithal Meet</button>
-      <button type="button" class="chip" onclick="quickSearch('25 * 16')">🧮 Math: 25 * 16</button>
-      <button type="button" class="chip" onclick="quickSearch('define zenith')">📖 define zenith</button>
-      <button type="button" class="chip" onclick="quickSearch('weather Kolkata')">🌤️ weather Kolkata</button>
-@@ -83,8 +140,6 @@
-  </footer>
+</div>
 
-  <script src="/data.js"></script>
-  <script>
-      <script src="/data.js"></script>
-  <script>
-    document.documentElement.setAttribute('data-theme', localStorage.getItem('zenithal_theme') || 'dark');
+<script>
+document.documentElement.setAttribute('data-theme', localStorage.getItem('Zenithal_theme') || 'light');
+function toggleTheme() {
+    const n = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', n);
+    localStorage.setItem('Zenithal_theme', n);
+}
+</script>
 
-@@ -113,123 +168,39 @@
-      rec.start();
-    }
 
-    document.getElementById('searchForm').addEventListener('submit', function(e) {
-      e.preventDefault();
-      runSearch();
-    });
-
-    async function runSearch() {
-      const raw = document.getElementById('q').value.trim();
-      if (!raw) return;
-      const lower = raw.toLowerCase();
-
-      if (lower.startsWith('!yt ')) {
-        location.href = 'https://' + '://youtube.com' + encodeURIComponent(raw.slice(4));
-        return;
-      }
-      if (lower.startsWith('!g ')) {
-        location.href = 'https://' + '://google.com' + encodeURIComponent(raw.slice(3));
-        return;
-      }
-
-      const box = document.getElementById('results');
-      document.getElementById('homeBox').style.padding = '24px 20px';
-      box.innerHTML = '<div class="card">Searching Zenithal...</div>';
-
-      // 1. Math Calculator
-      if (/^[0-9+\-*/().\s]+$/.test(raw)) {
-        try {
-          const ans = Function('"use strict";return (' + raw + ')')();
-          box.innerHTML = '<div class="card"><div class="title">🧮 Zenithal Calculator</div><p style="font-size:22px;font-weight:bold;margin:8px 0 0;">' + raw + ' = ' + ans + '</p></div>';
-          return;
-        } catch (err) {}
-      }
-
-      // 2. Unit Converter (e.g. "10 km to miles")
-      const parts = lower.split(' ');
-      if (parts.length === 4 && (parts.at(2) === 'to' || parts.at(2) === 'in')) {
-        const val = parseFloat(parts.at(0));
-        const from = parts.at(1);
-        const to = parts.at(3);
-        const rates = { km_miles: 0.621371, miles_km: 1.60934, m_cm: 100, cm_m: 0.01, kg_lbs: 2.20462, lbs_kg: 0.453592 };
-        let out = null;
-        if (from === 'c' && to === 'f') out = (val * 9 / 5) + 32;
-        else if (from === 'f' && to === 'c') out = (val - 32) * 5 / 9;
-        else if (rates[from + '_' + to]) out = val * rates[from + '_' + to];
-        if (out !== null && !isNaN(out)) {
-          box.innerHTML = '<div class="card"><div class="title">⚖️ Zenithal Unit Converter</div><p style="font-size:22px;font-weight:bold;margin:8px 0 0;">' + val + ' ' + from.toUpperCase() + ' = ' + out.toFixed(2) + ' ' + to.toUpperCase() + '</p></div>';
-          return;
-        }
-      }
-
-      // 3. Dictionary (e.g. "define zenith")
-      if (lower.startsWith('define ')) {
-        const word = raw.slice(7).trim();
-        try {
-          const dRes = await fetch('https://' + 'api.dictionaryapi.dev/api/v2/entries/en/' + encodeURIComponent(word));
-          if (dRes.ok) {
-            const dData = await dRes.json();
-            const entry = dData.at(0);
-            const meaning = entry.meanings.at(0);
-            const def = meaning.definitions.at(0).definition;
-            box.innerHTML = '<div class="card"><div class="title">📖 Dictionary: ' + entry.word + ' (' + meaning.partOfSpeech + ')</div><p style="margin:8px 0 0;">' + def + '</p></div>';
-            return;
-          }
-        } catch (err) {}
-      }
-
-      // 4. Live Weather (e.g. "weather Kolkata")
-      if (lower.startsWith('weather ')) {
-        const city = raw.slice(8).trim();
-        try {
-          const gRes = await fetch('https://' + '://open-meteo.com' + encodeURIComponent(city));
-          const gData = await gRes.json();
-          const p = gData.results.at(0);
-          if (p) {
-            const wRes = await fetch('https://' + '://open-meteo.com' + p.latitude + '&longitude=' + p.longitude + '&current_weather=true');
-            const wData = await wRes.json();
-            const cur = wData.current_weather;
-            box.innerHTML = '<div class="card"><div class="title">🌤️ Live Weather: ' + p.name + ', ' + p.country + '</div><p style="font-size:22px;font-weight:bold;margin:8px 0 4px;">' + cur.temperature + '°C</p><p style="color:var(--sub);margin:0;">Wind Speed: ' + cur.windspeed + ' km/h</p></div>';
-            return;
-          }
-        } catch (err) {}
-      }
-    // Zenithal Meet Quick-Launch Functions
-    function generateZMeetCode() {
-      const chars = 'abcdefghijklmnopqrstuvwxyz';
-      const part = (len) => Array.from({ length: len }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
-      return `${part(3)}-${part(4)}-${part(3)}`;
-    }
-
-      // 5. Zenithal Original Database (data.js)
-      let htmlOut = '';
-      if (typeof ZENITHAL_DB !== 'undefined') {
-        const matches = ZENITHAL_DB.filter(function(item) {
-          return item.title.toLowerCase().includes(lower) || item.keywords.some(function(k) { return lower.includes(k) || k.includes(lower); });
-        });
-        for (let i = 0; i < matches.length; i++) {
-          const m = matches.at(i);
-          htmlOut += '<div class="card" style="border-left:4px solid #3b82f6;"><div style="font-size:12px;color:#60a5fa;font-weight:bold;">⭐ ZENITHAL ORIGINAL • ' + m.category.toUpperCase() + '</div><div class="title" style="margin-top:4px;">' + m.title + '</div><p style="margin:8px 0 6px;">' + m.summary + '</p><p style="color:var(--sub);font-size:14px;margin:0;">' + m.example + '</p></div>';
-        }
-      }
-    function launchInstantZMeet() {
-      const roomCode = generateZMeetCode();
-      window.location.href = `meet.html?room=${roomCode}`;
-    }
-
-      // 6. Live Wikipedia Search
-      const apiUrl = 'https://' + 'en.wikipedia.org/w/api.php?action=query&list=search&format=json&origin=*&srsearch=' + encodeURIComponent(raw);
-      const res = await fetch(apiUrl);
-      const data = await res.json();
-      const items = (data.query && data.query.search) || [];
-      if (!items.length && !htmlOut) {
-        box.innerHTML = '<div class="card">No instant results found for "' + raw + '".</div>';
-    function joinExistingZMeet() {
-      const input = document.getElementById('zmeet-room-input').value.trim();
-      if (!input) {
-        alert('Please enter a meeting code or link!');
-        return;
-      }
-      for (let i = 0; i < items.length; i++) {
-        const item = items.at(i);
-        const wUrl = 'https://' + 'en.wikipedia.org/wiki/' + encodeURIComponent(item.title);
-        htmlOut += '<div class="card"><a class="title" href="' + wUrl + '" target="_blank">' + item.title + '</a><p style="color:var(--sub);margin:6px 0 0;">' + item.snippet + '...</p></div>';
-      }
-      box.innerHTML = htmlOut;
-      const roomCode = input.includes('room=') ? input.split('room=')[1].split('&')[0] : input;
-      window.location.href = `meet.html?room=${encodeURIComponent(roomCode)}`;
-    }
-    const urlQuery = new URLSearchParams(window.location.search).get('q');
-    if (urlQuery) {
-      document.getElementById('q').value = urlQuery;
-      runSearch();
-    }
-  </script>
-</body>
-</html>
-
-    
-    function getZenithalMeetWidget(query) {
-      const q = query.toLowerCase().trim();
-      const triggers = ['meet', 'zenithal meet', 'video call', 'start meeting', 'join meeting', 'vmeet'];
-      const isTriggered = triggers.some(word => q === word || q.includes('zenithal meet') || q.includes('video call'));
-      if (!isTriggered) return '';
-
-      return `
-        <div class="zmeet-card">
-          <span class="zmeet-badge">ZENITHAL ECOSYSTEM</span>
-          <h3>📹 Zenithal Meet</h3>
-          <p>Fast, secure video meetings directly in your browser. Start an instant room or join with a code.</p>
-          <div class="zmeet-actions">
-            <button type="button" class="zmeet-btn-primary" onclick="launchInstantZMeet()">+ New Meeting</button>
-            <div class="zmeet-join-group">
+</body></html>
