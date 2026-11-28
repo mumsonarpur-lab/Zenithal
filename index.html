@@ -61,7 +61,15 @@
 
       </div>
     </form>
-   <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:18px;max-width:600px;">
+  <!-- Zenithal Lenses -->
+<div id="zenithal-lenses" style="display:flex;gap:8px;justify-content:center;margin:16px 0 6px;flex-wrap:wrap;">
+  <button type="button" class="chip lens-btn" onclick="setLens('all', this)" style="border-color:var(--accent);background:var(--accent);color:#fff;">🌐 All</button>
+  <button type="button" class="chip lens-btn" onclick="setLens('originals', this)">⭐ Zenithal Originals</button>
+  <button type="button" class="chip lens-btn" onclick="setLens('wiki', this)">📚 Encyclopedia</button>
+  <button type="button" class="chip lens-btn" onclick="setLens('code', this)">💻 Code & Repos</button>
+  <button type="button" class="chip lens-btn" onclick="setLens('news', this)">📰 Live News</button>
+</div>
+
   <button type="button" class="chip" onclick="quickSearch('25 * 16')">🧮 Math: 25 * 16</button>
   <button type="button" class="chip" onclick="quickSearch('define zenith')">📖 define zenith</button>
   <button type="button" class="chip" onclick="quickSearch('weather Kolkata')">🌤 weather Kolkata</button>
@@ -259,6 +267,7 @@ syncZenithalEngine();
 setInterval(syncZenithalEngine, 600000);
 </script>
   <script type="module" src="/auth.js"></script>
+  <script src="lenses.js"></script>
 </body>
 </html>
 
